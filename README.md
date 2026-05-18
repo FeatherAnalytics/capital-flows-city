@@ -1,5 +1,7 @@
 # Capital Flow Cityscape
 
+[**Live Demo: Capital Flows**](https://www.featheranalytics.dev/capital-flows-city/) | [**Live Demo: Selloff**](https://www.featheranalytics.dev/capital-flows-city/selloff.html)
+
 I wanted to see if complex financial data — the kind that lives in Excel spreadsheets and BI dashboards — could be visualized in a way that reveals patterns you can't see in flat tables. This project is the result: a 3D cityscape where buildings represent securities, districts represent asset classes, and the flows of capital between them become visible paths through a living city.
 
 All values are randomized. This is a proof-of-concept project and should not be used as-is out-of-the-box.
