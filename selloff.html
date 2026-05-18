@@ -1,0 +1,3875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capital Flow Cityscape — Sell-Off Window</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+  /* ── Theme System ── */
+  :root, [data-theme="dark"] {
+    --color-primary: #10B981;
+    --color-primary-dark: #059669;
+    --color-primary-light: #34D399;
+    --color-accent: #F59E0B;
+    --color-accent-dark: #D97706;
+    --color-accent-light: #FCD34D;
+    --color-bg: #0F172A;
+    --color-bg-deep: #020617;
+    --color-surface: rgba(15, 23, 42, 0.92);
+    --color-surface-hover: rgba(30, 41, 59, 0.92);
+    --color-border: rgba(255,255,255,0.12);
+    --color-text: #F8FAFC;
+    --color-text-secondary: #94A3B8;
+    --color-text-muted: #64748B;
+    --color-heading-accent: #5EEAD4;
+    --color-label: #7DD3FC;
+    --color-link: #5EEAD4;
+    --color-success: #22C55E;
+    --color-error: #EF4444;
+    --color-warning: #F59E0B;
+    --color-slider-thumb: #10B981;
+    --color-dropdown-hover: rgba(16, 185, 129, 0.3);
+    --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+  [data-theme="light"] {
+    --color-primary: #059669;
+    --color-primary-dark: #047857;
+    --color-primary-light: #A7F3D0;
+    --color-accent: #D97706;
+    --color-accent-dark: #B45309;
+    --color-accent-light: #FDE68A;
+    --color-bg: #F1F5F9;
+    --color-bg-deep: #E2E8F0;
+    --color-surface: rgba(255, 255, 255, 0.95);
+    --color-surface-hover: rgba(241, 245, 249, 0.95);
+    --color-border: rgba(0,0,0,0.12);
+    --color-text: #0F172A;
+    --color-text-secondary: #475569;
+    --color-text-muted: #94A3B8;
+    --color-heading-accent: #059669;
+    --color-label: #0D9488;
+    --color-link: #059669;
+    --color-success: #16A34A;
+    --color-error: #DC2626;
+    --color-warning: #D97706;
+    --color-slider-thumb: #059669;
+    --color-dropdown-hover: rgba(5, 150, 105, 0.15);
+  }
+  [data-theme="light"] .pill--secondary {
+    background: rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.12);
+  }
+  [data-theme="light"] .pill--secondary:hover {
+    background: rgba(0,0,0,0.14);
+  }
+  [data-theme="light"] #timelapse-controls button {
+    background: rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.12);
+  }
+  [data-theme="light"] #timelapse-controls button:hover {
+    background: rgba(0,0,0,0.14);
+  }
+  [data-theme="light"] #filter-panel input[type="text"] {
+    background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.12);
+  }
+
+  #theme-toggle {
+    position: static; display: inline-flex; align-items: center; justify-content: center;
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: 8px; padding: 6px 10px;
+    backdrop-filter: blur(12px); cursor: pointer;
+    color: var(--color-text); font-size: 16px; line-height: 1;
+    transition: background 0.2s, color 0.2s;
+    margin-right: 8px; vertical-align: middle;
+  }
+  #theme-toggle:hover { background: var(--color-surface-hover); }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { overflow: hidden; background: var(--color-bg-deep); font-family: var(--font-ui); color: var(--color-text); }
+  #canvas-container { width: 100vw; height: 100vh; }
+  canvas { display: block; }
+
+  #legend {
+    position: fixed; top: 16px; left: 16px;
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: 10px; padding: 16px 20px; z-index: 10;
+    backdrop-filter: blur(12px); min-width: 180px;
+  }
+  #legend h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; color: var(--color-heading-accent); }
+  .legend-item { display: flex; align-items: center; margin: 6px 0; font-size: 13px; }
+  .legend-swatch { width: 14px; height: 14px; border-radius: 3px; margin-right: 10px; flex-shrink: 0; }
+
+  #stats {
+    position: fixed; top: 16px; right: 16px;
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: 10px; padding: 20px 28px; z-index: 10;
+    backdrop-filter: blur(12px); min-width: 280px;
+  }
+  #stats h3 { font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px; color: var(--color-heading-accent); }
+  .stat-row { display: flex; justify-content: space-between; margin: 8px 0; font-size: 14px; gap: 16px; }
+  .stat-label { color: var(--color-label); white-space: nowrap; }
+  .stat-value { font-weight: 600; color: var(--color-text); white-space: nowrap; }
+
+  #toolbar {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: 10px; padding: 10px 20px; z-index: 10;
+    backdrop-filter: blur(12px); display: flex; align-items: center; gap: 12px;
+  }
+  #toolbar label { font-size: 12px; color: var(--color-label); text-transform: uppercase; letter-spacing: 1px; }
+  #toolbar #date-range-display {
+    border-radius: 6px;
+  }
+
+  #tooltip {
+    position: fixed; display: none; z-index: 100;
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: 8px; padding: 12px 16px; pointer-events: none;
+    backdrop-filter: blur(16px); max-width: 340px; font-size: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  #tooltip h4 { font-size: 14px; margin-bottom: 6px; }
+  #tooltip .tip-row { display: flex; justify-content: space-between; margin: 3px 0; gap: 16px; }
+  #tooltip .tip-label { color: var(--color-label); }
+  #tooltip .tip-value { font-weight: 600; }
+
+  #flow-tooltip {
+    position: fixed; display: none; z-index: 110;
+    background: var(--color-surface); border: 1px solid rgba(16, 185, 129, 0.4);
+    border-radius: 10px; padding: 16px 20px; pointer-events: none;
+    backdrop-filter: blur(16px); min-width: 260px; max-width: 360px; font-size: 12px;
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.15), 0 4px 16px rgba(0,0,0,0.5);
+  }
+  #flow-tooltip .flow-direction {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+    font-size: 14px; font-weight: 600;
+  }
+  #flow-tooltip .flow-direction .flow-arrow {
+    color: var(--color-primary); font-size: 16px;
+  }
+  #flow-tooltip .flow-label { color: var(--color-heading-accent); font-size: 11px; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  #flow-tooltip .flow-divider {
+    border: none; border-top: 1px solid rgba(16, 185, 129, 0.25); margin: 8px 0;
+  }
+  #flow-tooltip .flow-row { display: flex; justify-content: space-between; margin: 5px 0; gap: 16px; }
+  #flow-tooltip .flow-row-label { color: var(--color-label); white-space: nowrap; }
+  #flow-tooltip .flow-row-value { font-weight: 600; color: var(--color-text); white-space: nowrap; }
+
+  #title-bar {
+    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: 10px; padding: 10px 24px; z-index: 10;
+    backdrop-filter: blur(12px); text-align: center;
+  }
+  #title-bar h1 { font-size: 16px; font-weight: 600; letter-spacing: 1px; }
+  #title-bar p { font-size: 11px; color: var(--color-label); margin-top: 2px; }
+
+  #controls-hint {
+    position: fixed; top: 280px; right: 16px;
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: 8px; padding: 8px 14px; z-index: 10;
+    font-size: 11px; color: var(--color-text-muted); width: 120px;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+
+  #timelapse-controls {
+    position: fixed; top: 76px; left: 50%; transform: translateX(-50%);
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: 10px; padding: 10px 16px; z-index: 9;
+    backdrop-filter: blur(12px); display: flex; align-items: center; gap: 10px;
+    min-width: 340px;
+  }
+  #timelapse-controls button {
+    background: rgba(204,204,204,0.25); color: var(--color-text); border: none; border-radius: 999px;
+    width: 28px; height: 28px; cursor: pointer; font-size: 14px; display: flex;
+    align-items: center; justify-content: center; transition: background 0.2s;
+  }
+  #timelapse-controls button:hover { background: rgba(204,204,204,0.4); }
+  #timeline-scrubber {
+    flex: 1; height: 4px; -webkit-appearance: none; appearance: none;
+    background: var(--color-border); border-radius: 2px; cursor: pointer;
+  }
+  #timeline-scrubber::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%;
+    background: var(--color-slider-thumb); cursor: pointer;
+  }
+  #timeline-date { font-size: 12px; color: var(--color-heading-accent); min-width: 50px; text-align: center; font-family: var(--font-mono); }
+  #playback-speed {
+    background: var(--color-surface); color: var(--color-label); border: 1px solid var(--color-border);
+    border-radius: 6px; padding: 2px 4px; font-size: 11px; cursor: pointer;
+  }
+
+  .pill {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 6px 16px; border-radius: 999px; border: none; cursor: pointer;
+    font-family: var(--font-ui); font-size: 13px; font-weight: 400;
+    transition: opacity 0.2s, background 0.2s; white-space: nowrap; line-height: 1.2;
+  }
+  .pill:hover { opacity: 0.85; }
+  .pill--primary { background: var(--color-primary); color: #FFFFFF; }
+  .pill--secondary { background: rgba(204,204,204,0.25); color: var(--color-text); }
+  .pill--secondary:hover { background: rgba(204,204,204,0.35); }
+  .pill--disabled { background: rgba(100,116,139,0.3); color: var(--color-text-muted); cursor: not-allowed; pointer-events: none; }
+  .pill--sm { padding: 4px 12px; font-size: 11px; }
+
+  .district-nav {
+    position: relative;
+    display: block;
+  }
+  .district-nav .nb-dropdown {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 100%;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 4px 0;
+    min-width: 140px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 20;
+    margin-right: 4px;
+  }
+  .district-nav:hover .nb-dropdown {
+    display: block;
+  }
+  .nb-dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 5px 12px;
+    background: none;
+    border: none;
+    color: var(--color-heading-accent);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    text-align: left;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .nb-dropdown-item:hover {
+    background: var(--color-dropdown-hover);
+    color: var(--color-text);
+  }
+
+  .toolbar-divider { border-left: 1px solid var(--color-border); height: 24px; align-self: center; }
+
+  #filter-panel {
+    position: fixed; top: 76px; left: 50%; transform: translateX(-50%);
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: 10px; padding: 12px 20px; z-index: 11;
+    backdrop-filter: blur(12px); display: none; gap: 16px; align-items: center;
+  }
+  #filter-panel label { font-size: 10px; color: var(--color-label); text-transform: uppercase; letter-spacing: 0.5px; }
+  #filter-panel input[type="text"] {
+    background: rgba(255,255,255,0.08); border: 1px solid var(--color-border);
+    border-radius: 6px; color: var(--color-text); padding: 5px 10px; font-size: 12px; width: 120px;
+    font-family: var(--font-ui);
+  }
+  #filter-panel input[type="range"] { width: 100px; accent-color: var(--color-primary); }
+</style>
+<link rel="stylesheet" href="mobile.css">
+</head>
+<body>
+
+<div id="canvas-container"></div>
+
+<div id="legend">
+  <h3>Districts</h3>
+  <div class="legend-body">
+  <div class="legend-item"><div class="legend-swatch" style="background:#F43F5E"></div>Stocks</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#3B82F6"></div>ETFs</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#EC4899"></div>Options</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#06B6D4"></div>Futures</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#F59E0B"></div>Bonds</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#10B981"></div>Mutual Funds</div>
+  <div class="legend-item" style="font-size:10px; color:var(--color-label);">&#x2500;&#x2500; Boulevards (inter-district flow)</div>
+  <div class="legend-encoding" style="border-top:1px solid var(--color-border); margin:8px 0; padding-top:6px;">
+    <h3 style="margin-bottom:4px;">Visual Encoding</h3>
+    <div class="legend-item" style="font-size:10px; color:var(--color-label);">&#x25AE; Height = AUM (log scale)</div>
+    <div class="legend-item" style="font-size:10px; color:var(--color-label);">&#x25AD; Width = Neighborhood type</div>
+    <div class="legend-item" style="font-size:10px; color:var(--color-label);">&#x2588; Color = Neighborhood identity</div>
+    <div class="legend-item" style="font-size:10px; color:var(--color-label);">&#x25A3; Glow = Ownership concentration</div>
+    <div class="legend-item" style="font-size:10px; color:var(--color-text-muted);">P = Cash parking (hold time)</div>
+  </div>
+  </div>
+</div>
+
+<div id="toolbar">
+  <label>Date Period:</label>
+  <span id="date-range-display" style="font-size:13px; color:var(--color-text); padding:6px 10px;">Loading...</span>
+  <span class="toolbar-divider"></span>
+  <button class="pill pill--secondary" onclick="toggleFilterPanel()">Filters</button>
+</div>
+
+
+<div id="timelapse-controls">
+  <button id="play-pause-btn" onclick="togglePlayback()" title="Play/Pause (Space)">&#x23F8;</button>
+  <input type="range" id="timeline-scrubber" min="0" max="100" value="0" step="0.1">
+  <span id="timeline-date">---</span>
+  <select id="playback-speed" onchange="setPlaybackSpeed(this.value)" title="Playback speed">
+    <option value="0.25">0.25&times;</option>
+    <option value="0.5">0.5&times;</option>
+    <option value="1" selected>1&times;</option>
+    <option value="2">2&times;</option>
+    <option value="5">5&times;</option>
+  </select>
+</div>
+
+<div id="filter-panel">
+  <div>
+    <label>Ticker</label><br>
+    <input type="text" id="filter-ticker" placeholder="Search..." oninput="applyFilters()">
+  </div>
+  <div>
+    <button class="pill pill--secondary pill--sm" id="filter-cross" onclick="toggleCrossDistrictFilter()">Cross-District Only</button>
+  </div>
+  <div>
+    <label>Min Flows: <span id="min-flow-label">0</span></label><br>
+    <input type="range" id="filter-min-flow" min="0" max="1000" value="0" step="10" oninput="onMinFlowChange(this.value)">
+  </div>
+  <div>
+    <label>Neighborhood</label><br>
+    <select id="filter-neighborhood" onchange="applyNeighborhoodFilter(this.value)" style="width:100%; padding:4px; background:var(--color-bg-deep); color:var(--color-text); border:1px solid var(--color-border); border-radius:4px; font-size:11px;">
+      <option value="">All Neighborhoods</option>
+    </select>
+  </div>
+  <div>
+    <button class="pill pill--secondary pill--sm" onclick="clearFilters()">Clear</button>
+  </div>
+</div>
+
+<div id="stats">
+  <h3 style="display:flex; align-items:center;"><button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">&#x1F319;</button>Flow Statistics</h3>
+  <div class="stats-body">
+  <div class="stat-row"><span class="stat-label">Active Range</span><span class="stat-value" id="stat-range">-</span></div>
+  <div class="stat-row"><span class="stat-label">Total Flows</span><span class="stat-value" id="stat-total">-</span></div>
+  <div class="stat-row"><span class="stat-label">Unique Accounts</span><span class="stat-value" id="stat-accounts">-</span></div>
+  <div class="stat-row"><span class="stat-label">Total Volume</span><span class="stat-value" id="stat-volume">-</span></div>
+  <div class="stat-row"><span class="stat-label">Cross-District</span><span class="stat-value" id="stat-cross">-</span></div>
+  <div class="stat-row"><span class="stat-label">Avg Hours in Cash</span><span class="stat-value" id="stat-days">-</span></div>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+<div id="flow-tooltip"></div>
+
+<div id="title-bar">
+  <h1>Capital Flow Cityscape — Sell-Off Window</h1>
+  <p>Oct 27–29, 2025: baseline → sell-off → buying surge</p>
+</div>
+
+<div id="controls-hint">
+  <button class="pill pill--secondary pill--sm" onclick="toggleNightMode()" id="night-mode-btn" style="width:100%; margin-bottom:6px;">Night</button>
+  <button class="pill pill--secondary pill--sm" onclick="cameraPreset(7)" style="width:100%;">Overview</button>
+  <div class="district-nav" style="width:100%;">
+    <button class="pill pill--secondary pill--sm" style="width:100%;" onclick="cameraPreset(1)">Stocks</button>
+    <div class="nb-dropdown" id="nb-dropdown-Stocks"></div>
+  </div>
+  <div class="district-nav" style="width:100%;">
+    <button class="pill pill--secondary pill--sm" style="width:100%;" onclick="cameraPreset(2)">ETFs</button>
+    <div class="nb-dropdown" id="nb-dropdown-ETFs"></div>
+  </div>
+  <div class="district-nav" style="width:100%;">
+    <button class="pill pill--secondary pill--sm" style="width:100%;" onclick="cameraPreset(3)">Bonds</button>
+    <div class="nb-dropdown" id="nb-dropdown-Bonds"></div>
+  </div>
+  <div class="district-nav" style="width:100%;">
+    <button class="pill pill--secondary pill--sm" style="width:100%;" onclick="cameraPreset(4)">Options</button>
+    <div class="nb-dropdown" id="nb-dropdown-Options"></div>
+  </div>
+  <div class="district-nav" style="width:100%;">
+    <button class="pill pill--secondary pill--sm" style="width:100%;" onclick="cameraPreset(5)">MFs</button>
+    <div class="nb-dropdown" id="nb-dropdown-Mutual Funds"></div>
+  </div>
+  <div style="font-size:10px; color:var(--color-text-muted); margin-top:6px;">
+    Left-drag: rotate &middot; Right-drag: pan &middot; Scroll: zoom &middot; Click: isolate
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+
+// ── Data Loading ──
+let RAW_DATA = [];
+let aumLookup = {};  // symbol -> AUM (equities/MFs), asset_id -> AUM (fixed income)
+let maxAum = 1;      // max AUM across all positions, for log-scale normalization
+
+// ── View Mode State ──
+let currentViewMode = 'all';
+let riskMappingData = null;
+let riskDataAvailable = false;
+let originalLegendHTML = '';
+let filterPanelOpen = false;
+let crossDistrictFilterActive = false;
+
+const RISK_TIER_COLORS = {
+  1: 0x22C55E,  // Very Low — Green
+  2: 0x7DD3FC,  // Low — Sky
+  3: 0xFBBF24,  // Moderate — Amber
+  4: 0xF97316,  // Elevated — Orange
+  5: 0xEF4444,  // High — Red
+};
+const RISK_TIER_LABELS = { 1: 'Very Low', 2: 'Low', 3: 'Moderate', 4: 'Elevated', 5: 'High' };
+
+// ── Color Palette ──
+const COLORS = {
+  'Stocks':             0xF43F5E,
+  'ETFs':               0x3B82F6,
+  'Bonds':              0xF59E0B,
+  'Mutual Funds':       0x10B981,
+  'Options':            0xEC4899,
+  road:                 0x64748B,
+  background:           0x0F172A,
+};
+
+// Dynamic neighborhood shading: computed per district in createBuildings()
+// Each unique neighborhood within a district gets a distinct shade offset
+// ranging from -0.2 to +0.25, evenly spaced by index
+
+function shadeColor(hex, factor) {
+  const c = new THREE.Color(hex);
+  if (factor > 0) c.lerp(new THREE.Color(0xffffff), factor);
+  else c.lerp(new THREE.Color(0x000000), -factor);
+  return c;
+}
+
+function seededRandom(seed) {
+  let s = seed;
+  return function() {
+    s = (s * 16807 + 0) % 2147483647;
+    return s / 2147483647;
+  };
+}
+
+function pointInPolygon(x, y, vertices) {
+  let inside = false;
+  for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+    const xi = vertices[i].x, yi = vertices[i].y;
+    const xj = vertices[j].x, yj = vertices[j].y;
+    if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+
+// ── Voronoi Tessellation ──
+// Computes space-filling Voronoi cells for district ground plates.
+// Uses half-plane intersection with Sutherland-Hodgman clipping.
+// Guarantees zero gaps and zero overlaps between adjacent districts.
+function computeVoronoiCells(centers) {
+  // Centroid of all district centers
+  const centroidX = centers.reduce((s, c) => s + c.cx, 0) / centers.length;
+  const centroidZ = centers.reduce((s, c) => s + c.cz, 0) / centers.length;
+  const maxDist = Math.max(...centers.map(c =>
+    Math.sqrt((c.cx - centroidX) ** 2 + (c.cz - centroidZ) ** 2)
+  ));
+  const boundRadius = maxDist + 80;
+
+  // Create bounding polygon — circle discretized to 48 segments
+  const boundingPoly = [];
+  const nSegs = 48;
+  for (let i = 0; i < nSegs; i++) {
+    const angle = (i / nSegs) * Math.PI * 2;
+    boundingPoly.push({
+      x: centroidX + Math.cos(angle) * boundRadius,
+      y: centroidZ + Math.sin(angle) * boundRadius
+    });
+  }
+
+  // Sutherland-Hodgman: clip polygon against half-plane
+  // Half-plane keeps points where dot(P - linePoint, lineNormal) <= 0
+  function clipPolygonByHalfPlane(polygon, linePoint, lineNormal) {
+    if (polygon.length === 0) return polygon;
+    const output = [];
+    for (let i = 0; i < polygon.length; i++) {
+      const a = polygon[i];
+      const b = polygon[(i + 1) % polygon.length];
+      const dA = (a.x - linePoint.x) * lineNormal.x + (a.y - linePoint.y) * lineNormal.y;
+      const dB = (b.x - linePoint.x) * lineNormal.x + (b.y - linePoint.y) * lineNormal.y;
+      if (dA <= 0) {
+        output.push(a);
+        if (dB > 0) {
+          const t = dA / (dA - dB);
+          output.push({
+            x: a.x + t * (b.x - a.x),
+            y: a.y + t * (b.y - a.y)
+          });
+        }
+      } else {
+        if (dB <= 0) {
+          const t = dA / (dA - dB);
+          output.push({
+            x: a.x + t * (b.x - a.x),
+            y: a.y + t * (b.y - a.y)
+          });
+        }
+      }
+    }
+    return output;
+  }
+
+  const result = {};
+
+  centers.forEach(ci => {
+    // Start with bounding polygon
+    let cell = boundingPoly.slice();
+
+    // Clip against perpendicular bisector with every other center
+    centers.forEach(cj => {
+      if (ci.name === cj.name) return;
+      // Midpoint between ci and cj (in world xz space, stored as x/y)
+      const mx = (ci.cx + cj.cx) / 2;
+      const my = (ci.cz + cj.cz) / 2;
+      // Normal points from ci toward cj (away from ci's side)
+      const nx = cj.cx - ci.cx;
+      const ny = cj.cz - ci.cz;
+      cell = clipPolygonByHalfPlane(cell, { x: mx, y: my }, { x: nx, y: ny });
+    });
+
+    // Convert world-space cell vertices to local shape coordinates
+    // local_x = world_x - cx
+    // local_y = cz - world_z  (Y axis flipped for THREE.Shape after rotateX(-PI/2))
+    const localPoints = cell.map(p => new THREE.Vector2(
+      p.x - ci.cx,
+      ci.cz - p.y
+    ));
+
+    // Build THREE.Shape with straight edges (no smoothing — cells must tile perfectly)
+    const shape = new THREE.Shape();
+    if (localPoints.length > 0) {
+      shape.moveTo(localPoints[0].x, localPoints[0].y);
+      for (let i = 1; i < localPoints.length; i++) {
+        shape.lineTo(localPoints[i].x, localPoints[i].y);
+      }
+      shape.closePath();
+    }
+
+    result[ci.name] = { shape, points: localPoints };
+  });
+
+  return result;
+}
+
+// ── Dynamic Layout Pipeline (Phase 3) ──
+// Everything derives from inputs: building counts, cash volumes, etc.
+// No hardcoded positions — districts, roads, blocks, parking lots all computed.
+
+// Pipeline constants — tune these to control spacing
+const PIPELINE = {
+  districtGap: 18,       // visible gap between districts
+  blockStreetWidth: 5,   // streets between blocks within a district
+  buildingClearance: 1.2, // clearance around each building cell
+  cellPadding: 0.8,      // padding within each cell
+  parkingLotMargin: 4,   // margin from district edge for parking lots
+  minBuildingSize: 2.5,  // minimum building footprint
+  maxBuildingSize: 8,    // maximum building footprint
+};
+
+// Layout state — populated by computeDynamicLayout()
+let DISTRICT_LAYOUT = {};
+let PARKING_LOTS = {};
+
+// Timelapse state
+let timelineStart = null;       // Date: earliest first_flow_date
+let timelineEnd = null;         // Date: latest last_flow_date
+let totalTimelineDays = 0;      // timelineEnd - timelineStart in days
+let playbackDay = 0;            // Current day offset from timelineStart (float)
+const PLAYBACK_BASE_RATE = 0.1;  // Days per second at 1x (120s to reach day 12)
+let playbackSpeed = PLAYBACK_BASE_RATE;
+let buildingDailyAUM = {};      // Per-building daily AUM fractions for timelapse
+let lastRenderedDay = -1;       // Last day for which window lighting was updated
+let playbackPaused = false;
+
+// Dot system
+const MAX_DOTS = 2000;
+let dotInstanceMesh = null;     // InstancedMesh of spheres
+let dotData = [];               // Active dots: { instanceIndex, waypoints, totalLength, progress, speed, color }
+let dotFreeList = [];           // Available instance indices
+let flowPool = [];              // Pre-computed: flows with date info for spawning
+
+// District arrangement: all districts
+const ALL_DISTRICTS = ['Stocks', 'Bonds', 'ETFs', 'Options', 'Mutual Funds'];
+function computeDynamicLayout(buildingsMap) {
+  // Step 1: Count buildings per district
+  const counts = {};
+  Object.values(buildingsMap).forEach(b => {
+    counts[b.district] = (counts[b.district] || 0) + 1;
+  });
+
+  const allDistricts = ALL_DISTRICTS;
+  const totalBuildings = allDistricts.reduce((s, d) => s + (counts[d] || 1), 0);
+  const gap = PIPELINE.districtGap;
+
+  // Step 2: Size each district to tightly fit its block grid (no empty blocks).
+  // Uses the same block/cell constants as layoutBuildings() so sizes match exactly.
+  const MAX_PER_DISTRICT = 200;
+  const _blockCols = 3, _blockRows = 3;
+  const _bldgsPerBlock = _blockCols * _blockRows;
+  const _streetW = PIPELINE.blockStreetWidth;
+  const _clearance = PIPELINE.buildingClearance;
+  const _targetCellSize = PIPELINE.maxBuildingSize + PIPELINE.cellPadding + _clearance;
+  const _targetBlockW = _blockCols * _targetCellSize + _clearance;
+  const _targetBlockH = _blockRows * _targetCellSize + _clearance;
+
+  const districtSizes = {};
+  allDistricts.forEach(name => {
+    const count = Math.min(counts[name] || 1, MAX_PER_DISTRICT);
+    const totalBlocks = Math.ceil(count / _bldgsPerBlock);
+    // Find tightest grid (cols × rows >= totalBlocks), wider-than-tall, minimal waste
+    let bestCols = totalBlocks, bestRows = 1, bestWaste = 0, bestScore = Infinity;
+    for (let c = 1; c <= totalBlocks; c++) {
+      const r = Math.ceil(totalBlocks / c);
+      const ratio = c / r;
+      if (ratio < 1.0 || ratio > 3.0) continue;  // keep wider-than-tall but not extreme
+      const waste = c * r - totalBlocks;
+      const ratioPenalty = Math.abs(ratio - 1.5);  // prefer ~1.5 aspect
+      const score = waste * 10 + ratioPenalty;
+      if (score < bestScore) {
+        bestCols = c; bestRows = r; bestWaste = waste; bestScore = score;
+      }
+    }
+    const w = bestCols * _targetBlockW + _streetW * (bestCols + 1);
+    const h = bestRows * _targetBlockH + _streetW * (bestRows + 1);
+    districtSizes[name] = { w: Math.max(w, 40), h: Math.max(h, 30) };
+  });
+
+  // Step 3: Circular/radial layout — non-uniform angles proportional to district size
+  // Clockwise from north (-Z): Stocks, Futures, ETFs, Bonds, Options, Mutual Funds
+
+  // Per-district variable radii: each district placed at minimum distance from center,
+  // then iteratively pushed outward only where adjacent pairs would overlap.
+  const halfDiags = {};
+  ALL_DISTRICTS.forEach(d => {
+    const s = districtSizes[d];
+    halfDiags[d] = Math.sqrt(s.w ** 2 + s.h ** 2) / 2;
+  });
+
+  // Initial radius per district: pack tightly so districts touch
+  const perRadius = {};
+  ALL_DISTRICTS.forEach(d => {
+    const s = districtSizes[d];
+    const avgHalf = (s.w + s.h) / 4;
+    perRadius[d] = avgHalf + gap;
+  });
+
+  // Compute non-uniform angles: larger districts get wider wedges
+  const totalDiag = ALL_DISTRICTS.reduce((s, d) => s + halfDiags[d], 0);
+  const cumulativeAngles = [0]; // first district starts at 0
+  for (let i = 0; i < ALL_DISTRICTS.length; i++) {
+    const fraction = halfDiags[ALL_DISTRICTS[i]] / totalDiag;
+    let angle = fraction * Math.PI * 2;
+    // Clamp to prevent extremes: min 40° (~0.698 rad), max 90° (~1.571 rad)
+    angle = Math.max(0.698, Math.min(1.571, angle));
+    cumulativeAngles.push(cumulativeAngles[i] + angle);
+  }
+  // Normalize so total = 2π
+  const totalAngle = cumulativeAngles[cumulativeAngles.length - 1];
+  const normFactor = (Math.PI * 2) / totalAngle;
+  for (let i = 1; i < cumulativeAngles.length; i++) {
+    cumulativeAngles[i] *= normFactor;
+  }
+
+  // Iteratively resolve adjacent pair overlaps (3 passes converges)
+  for (let iter = 0; iter < 3; iter++) {
+    for (let i = 0; i < ALL_DISTRICTS.length; i++) {
+      const j = (i + 1) % ALL_DISTRICTS.length;
+      const a = ALL_DISTRICTS[i], b = ALL_DISTRICTS[j];
+      const rA = perRadius[a], rB = perRadius[b];
+      // Use actual angular separation between adjacent district midpoints
+      const thetaA = (cumulativeAngles[i] + cumulativeAngles[i + 1]) / 2;
+      const thetaB_raw = (cumulativeAngles[j] + cumulativeAngles[j + 1]) / 2;
+      // Handle wrap-around for last→first pair
+      const thetaB = j === 0 ? thetaB_raw + Math.PI * 2 : thetaB_raw;
+      const angleBetween = thetaB - thetaA;
+      // Law of cosines: d² = rA² + rB² - 2·rA·rB·cos(angle)
+      const dist = Math.sqrt(rA * rA + rB * rB - 2 * rA * rB * Math.cos(angleBetween));
+      const minDist = (halfDiags[a] + halfDiags[b]) * 0.5 + gap;
+      if (dist < minDist) {
+        const scale = minDist / dist;
+        perRadius[a] = Math.max(perRadius[a], rA * scale);
+        perRadius[b] = Math.max(perRadius[b], rB * scale);
+      }
+    }
+  }
+
+  const computed = {};
+
+  // Place all districts at midpoint of their angular allocation
+  ALL_DISTRICTS.forEach((name, i) => {
+    const theta = (cumulativeAngles[i] + cumulativeAngles[i + 1]) / 2;
+    const r = perRadius[name];
+    const size = districtSizes[name];
+    computed[name] = {
+      cx: r * Math.sin(theta),
+      cz: -r * Math.cos(theta),
+      w: size.w,
+      h: size.h
+    };
+  });
+
+  // Compute Voronoi cells — space-filling, no gaps, no overlaps
+  const districtCenters = Object.entries(computed).map(([name, lay]) => ({ name, cx: lay.cx, cz: lay.cz }));
+  const voronoiCells = computeVoronoiCells(districtCenters);
+  Object.keys(computed).forEach(name => {
+    const cell = voronoiCells[name];
+    computed[name].organicShape = cell.shape;
+    computed[name].organicPoints = cell.points;
+    // Compute largest axis-aligned inscribed rectangle within the Voronoi polygon.
+    // Samples candidate rectangles centered at grid points inside the polygon,
+    // then expands each to the largest rect that fits. This guarantees the treemap
+    // rect is fully contained within the Voronoi cell (no building overflow).
+    if (cell.points.length > 0) {
+      const pts = cell.points;
+      const xs = pts.map(p => p.x);
+      const ys = pts.map(p => p.y);
+      const minX = Math.min(...xs), maxX = Math.max(...xs);
+      const minY = Math.min(...ys), maxY = Math.max(...ys);
+      const bboxW = maxX - minX, bboxH = maxY - minY;
+
+      // Sample grid inside bounding box; for each interior point,
+      // find max inscribed rect by binary-searching width/height
+      const steps = 12; // grid resolution
+      let bestArea = 0, bestRX = 0, bestRY = 0, bestRW = 0, bestRH = 0;
+
+      for (let gi = 0; gi <= steps; gi++) {
+        for (let gj = 0; gj <= steps; gj++) {
+          const cx = minX + (gi / steps) * bboxW;
+          const cy = minY + (gj / steps) * bboxH;
+          if (!pointInPolygon(cx, cy, pts)) continue;
+
+          // Expand from center: find max half-widths in each direction
+          // by testing polygon edges
+          let left = cx - minX, right = maxX - cx;
+          let top = cy - minY, bottom = maxY - cy;
+
+          // Clip against each polygon edge
+          for (let ei = 0, ej = pts.length - 1; ei < pts.length; ej = ei++) {
+            const p1 = pts[ej], p2 = pts[ei];
+            // Horizontal span clipping: for edges that cross the cy line
+            if ((p1.y <= cy && p2.y > cy) || (p2.y <= cy && p1.y > cy)) {
+              const xInt = p1.x + (cy - p1.y) / (p2.y - p1.y) * (p2.x - p1.x);
+              if (xInt < cx) left = Math.min(left, cx - xInt);
+              else right = Math.min(right, xInt - cx);
+            }
+            // Vertical span clipping: for edges that cross the cx line
+            if ((p1.x <= cx && p2.x > cx) || (p2.x <= cx && p1.x > cx)) {
+              const yInt = p1.y + (cx - p1.x) / (p2.x - p1.x) * (p2.y - p1.y);
+              if (yInt < cy) top = Math.min(top, cy - yInt);
+              else bottom = Math.min(bottom, yInt - cy);
+            }
+          }
+
+          // Also ensure all 4 corners are inside the polygon
+          // Shrink iteratively if corners fall outside
+          for (let shrink = 0; shrink < 8; shrink++) {
+            const x0 = cx - left, x1 = cx + right;
+            const y0 = cy - top, y1 = cy + bottom;
+            const c1 = pointInPolygon(x0, y0, pts);
+            const c2 = pointInPolygon(x1, y0, pts);
+            const c3 = pointInPolygon(x1, y1, pts);
+            const c4 = pointInPolygon(x0, y1, pts);
+            if (c1 && c2 && c3 && c4) break;
+            // Shrink the side(s) whose corners are outside
+            const factor = 0.85;
+            if (!c1 || !c4) left *= factor;
+            if (!c2 || !c3) right *= factor;
+            if (!c1 || !c2) top *= factor;
+            if (!c3 || !c4) bottom *= factor;
+          }
+
+          const rw = left + right;
+          const rh = top + bottom;
+          const area = rw * rh;
+          if (area > bestArea) {
+            bestArea = area;
+            bestRW = rw;
+            bestRH = rh;
+            bestRX = cx - left + rw / 2; // center X of the rect
+            bestRY = cy - top + rh / 2;  // center Y of the rect
+          }
+        }
+      }
+
+      // Shrink inscribed rect to create visible buffer at district edges
+      const safetyInset = 0.88;
+      computed[name].w = bestRW * safetyInset;
+      computed[name].h = bestRH * safetyInset;
+      computed[name].cellOffsetX = bestRX;
+      computed[name].cellOffsetY = bestRY;
+    }
+  });
+
+  // Step 5: Parking lot placement — each outer district gets a lot on its inner edge (facing center).
+  // Center district gets a lot on its right side.
+  const parkingLots = {};
+  const lotSize = 10;
+  const lotHalf = lotSize / 2;
+  const lotInset = 2;
+
+  ALL_DISTRICTS.forEach(name => {
+    const lay = computed[name];
+    // Determine which edge is closest to center (0,0).
+    // Check distances from each edge midpoint to origin.
+    const leftEdgeDist   = Math.abs(lay.cx - lay.w / 2);  // left edge x to 0
+    const rightEdgeDist  = Math.abs(lay.cx + lay.w / 2);  // right edge x to 0
+    const topEdgeDist    = Math.abs(lay.cz - lay.h / 2);  // top edge z to 0
+    const bottomEdgeDist = Math.abs(lay.cz + lay.h / 2);  // bottom edge z to 0
+
+    // Also consider the full distance from edge midpoint to origin
+    const edgeCandidates = [
+      { edge: 'left',   dist: Math.sqrt((lay.cx - lay.w / 2) ** 2 + lay.cz ** 2) },
+      { edge: 'right',  dist: Math.sqrt((lay.cx + lay.w / 2) ** 2 + lay.cz ** 2) },
+      { edge: 'top',    dist: Math.sqrt(lay.cx ** 2 + (lay.cz - lay.h / 2) ** 2) },
+      { edge: 'bottom', dist: Math.sqrt(lay.cx ** 2 + (lay.cz + lay.h / 2) ** 2) }
+    ];
+    const closest = edgeCandidates.reduce((a, b) => a.dist < b.dist ? a : b).edge;
+
+    let px, pz;
+    if (closest === 'left') {
+      px = lay.cx - lay.w / 2 + lotHalf + lotInset;
+      pz = lay.cz;
+    } else if (closest === 'right') {
+      px = lay.cx + lay.w / 2 - lotHalf - lotInset;
+      pz = lay.cz;
+    } else if (closest === 'top') {
+      px = lay.cx;
+      pz = lay.cz - lay.h / 2 + lotHalf + lotInset;
+    } else {
+      px = lay.cx;
+      pz = lay.cz + lay.h / 2 - lotHalf - lotInset;
+    }
+    parkingLots[name] = { x: px, z: pz, w: lotSize, h: lotSize };
+  });
+
+  return { layout: computed, parkingLots };
+}
+
+// ── Dot System (Timelapse Walking Dots) ──
+
+function initDotPool() {
+  if (dotInstanceMesh) {
+    scene.remove(dotInstanceMesh);
+    dotInstanceMesh.geometry.dispose();
+    dotInstanceMesh.material.dispose();
+  }
+  dotData = [];
+  dotFreeList = [];
+
+  const geo = new THREE.SphereGeometry(1, 8, 6);
+  const mat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  dotInstanceMesh = new THREE.InstancedMesh(geo, mat, MAX_DOTS);
+  dotInstanceMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  dotInstanceMesh.frustumCulled = false;
+  scene.add(dotInstanceMesh);
+  dotInstanceMesh.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 10000);
+
+  const _d = new THREE.Object3D();
+  for (let i = 0; i < MAX_DOTS; i++) {
+    _d.position.set(0, -100, 0);
+    _d.scale.set(0, 0, 0);
+    _d.updateMatrix();
+    dotInstanceMesh.setMatrixAt(i, _d.matrix);
+    dotInstanceMesh.setColorAt(i, new THREE.Color(0x000000));
+    dotFreeList.push(i);
+  }
+  dotInstanceMesh.instanceMatrix.needsUpdate = true;
+  dotInstanceMesh.instanceColor.needsUpdate = true;
+  interactables.push(dotInstanceMesh);
+}
+
+function dateToDayOffset(dateStr) {
+  if (!timelineStart) return 0;
+  const d = new Date(dateStr + 'T00:00:00');
+  return (d - timelineStart) / (1000 * 60 * 60 * 24);
+}
+
+function prepareFlowPool(flows) {
+  flowPool = [];
+  Object.values(flows).forEach(flow => {
+    if (!flow.firstDate || !flow.lastDate) return;
+    const startDay = dateToDayOffset(flow.firstDate);
+    const endDay = dateToDayOffset(flow.lastDate);
+    const daysActive = Math.max(1, endDay - startDay);
+    const dailyRate = flow.count / daysActive;
+
+    flowPool.push({
+      flow,
+      startDay,
+      endDay,
+      dailyRate,
+      isCrossDistrict: flow.from_district !== flow.to_district
+    });
+  });
+}
+
+function buildDotPath(fromPos, toPos, fromDistrict, toDistrict, isCrossDistrict) {
+  const y = 0.5;
+  const pts = [];
+  let parkingIndex = -1;
+
+  if (isCrossDistrict) {
+    const stFrom = PARKING_LOTS[fromDistrict];
+    const stTo = PARKING_LOTS[toDistrict];
+    if (!stFrom || !stTo) return { waypoints: [], parkingIndex: -1 };
+
+    pts.push(new THREE.Vector3(fromPos.x, y, fromPos.z));
+    if (Math.abs(fromPos.x - stFrom.x) > 1 || Math.abs(fromPos.z - stFrom.z) > 1) {
+      pts.push(new THREE.Vector3(stFrom.x, y, fromPos.z));
+    }
+    parkingIndex = pts.length;
+    pts.push(new THREE.Vector3(stFrom.x, y, stFrom.z));
+
+    pts.push(new THREE.Vector3(stTo.x, y, stTo.z));
+
+    if (Math.abs(stTo.x - toPos.x) > 1 || Math.abs(stTo.z - toPos.z) > 1) {
+      pts.push(new THREE.Vector3(toPos.x, y, stTo.z));
+    }
+    pts.push(new THREE.Vector3(toPos.x, y, toPos.z));
+  } else {
+    const st = PARKING_LOTS[fromDistrict];
+    if (!st) return { waypoints: [], parkingIndex: -1 };
+
+    pts.push(new THREE.Vector3(fromPos.x, y, fromPos.z));
+    if (Math.abs(fromPos.x - st.x) > 1 || Math.abs(fromPos.z - st.z) > 1) {
+      pts.push(new THREE.Vector3(st.x, y, fromPos.z));
+    }
+    parkingIndex = pts.length;
+    pts.push(new THREE.Vector3(st.x, y, st.z));
+
+    if (Math.abs(st.x - toPos.x) > 1 || Math.abs(st.z - toPos.z) > 1) {
+      pts.push(new THREE.Vector3(toPos.x, y, st.z));
+    }
+    pts.push(new THREE.Vector3(toPos.x, y, toPos.z));
+  }
+
+  return { waypoints: pts, parkingIndex };
+}
+
+function spawnDot(poolEntry) {
+  if (dotFreeList.length === 0) return;
+
+  const flow = poolEntry.flow;
+  const fromPos = currentPositions[flow.fromKey];
+  const toPos = currentPositions[flow.toKey];
+  if (!fromPos || !toPos) return;
+
+  const instanceIndex = dotFreeList.pop();
+  const pathResult = buildDotPath(fromPos, toPos, flow.from_district, flow.to_district, poolEntry.isCrossDistrict);
+  const waypoints = pathResult.waypoints;
+  if (waypoints.length < 2) { dotFreeList.push(instanceIndex); return; }
+
+  let totalLength = 0;
+  for (let i = 1; i < waypoints.length; i++) {
+    totalLength += waypoints[i].distanceTo(waypoints[i - 1]);
+  }
+  if (totalLength < 0.1) { dotFreeList.push(instanceIndex); return; }
+
+  let parkingProgress = -1;
+  if (pathResult.parkingIndex >= 0) {
+    let dist = 0;
+    for (let i = 1; i <= pathResult.parkingIndex; i++) {
+      dist += waypoints[i].distanceTo(waypoints[i - 1]);
+    }
+    parkingProgress = dist / totalLength;
+  }
+
+  const avgHours = flow.count > 0 ? (flow.totalDaysInCash / flow.count) : 0;
+  const dwellDays = Math.min((avgHours || 0) / 24, 5);
+
+  const lot = PARKING_LOTS[flow.from_district];
+  const lotW = lot ? lot.w : 10;
+  const lotH = lot ? lot.h : 10;
+  const parkingOffset = new THREE.Vector3(
+    (Math.random() - 0.5) * lotW * 0.7,
+    0,
+    (Math.random() - 0.5) * lotH * 0.7
+  );
+
+  const color = new THREE.Color(COLORS[flow.from_district] || 0x5EEAD4);
+  dotInstanceMesh.setColorAt(instanceIndex, color);
+
+  const walkFraction = poolEntry.isCrossDistrict ? 0.4 : 1.0;
+  const avgSpeed = walkFraction * 8 + (1 - walkFraction) * 60;
+
+  dotData.push({
+    instanceIndex,
+    flow,
+    waypoints,
+    totalLength,
+    speed: avgSpeed * (0.8 + Math.random() * 0.4),
+    progress: 0,
+    color,
+    parkingProgress,
+    parkingIndex: pathResult.parkingIndex,
+    dwellDays,
+    dwellRemaining: dwellDays,
+    parkingOffset
+  });
+}
+
+
+// ── Organic Path Network ──
+function createOrganicPaths(flows) {
+  const roadY = 1.2;
+
+  // Part 1: Inter-district boulevards along shared Voronoi edges
+  const worldPolygons = {};
+  Object.entries(DISTRICT_LAYOUT).forEach(([name, layout]) => {
+    if (!layout.organicPoints || layout.organicPoints.length === 0) return;
+    worldPolygons[name] = layout.organicPoints.map(p => ({
+      x: layout.cx + p.x,
+      z: layout.cz - p.y
+    }));
+  });
+
+  const districtNames = Object.keys(worldPolygons);
+  const epsilon = 1.0;
+  const sharedSegments = [];
+
+  for (let i = 0; i < districtNames.length; i++) {
+    for (let j = i + 1; j < districtNames.length; j++) {
+      const dA = districtNames[i], dB = districtNames[j];
+      const polyA = worldPolygons[dA], polyB = worldPolygons[dB];
+
+      const matches = [];
+      for (let ai = 0; ai < polyA.length; ai++) {
+        for (let bi = 0; bi < polyB.length; bi++) {
+          if (Math.abs(polyA[ai].x - polyB[bi].x) < epsilon &&
+              Math.abs(polyA[ai].z - polyB[bi].z) < epsilon) {
+            matches.push({
+              ai, bi,
+              x: (polyA[ai].x + polyB[bi].x) / 2,
+              z: (polyA[ai].z + polyB[bi].z) / 2
+            });
+          }
+        }
+      }
+      if (matches.length < 2) continue;
+
+      matches.sort((a, b) => a.ai - b.ai);
+
+      // Handle polygon wraparound
+      if (matches.length >= 2) {
+        const first = matches[0], last = matches[matches.length - 1];
+        if (last.ai === polyA.length - 1 && first.ai === 0) {
+          matches.unshift(matches.pop());
+        }
+      }
+
+      for (let k = 0; k < matches.length - 1; k++) {
+        sharedSegments.push({
+          districts: [dA, dB],
+          from: { x: matches[k].x, z: matches[k].z },
+          to: { x: matches[k + 1].x, z: matches[k + 1].z }
+        });
+      }
+    }
+  }
+
+
+  // Flow volume per district pair for boulevard width
+  const pairVolumes = {};
+  Object.values(flows).forEach(flow => {
+    if (flow.from_district === flow.to_district) return;
+    const key = [flow.from_district, flow.to_district].sort().join('↔');
+    pairVolumes[key] = (pairVolumes[key] || 0) + flow.totalAmount;
+  });
+  const maxPairVolume = Math.max(...Object.values(pairVolumes), 1);
+
+  // Fallback: if shared edge detection found no matches, create boulevard paths
+  // as straight lines between adjacent district centers that share flows
+  if (sharedSegments.length === 0) {
+    const distNames = Object.keys(DISTRICT_LAYOUT);
+    for (let i = 0; i < distNames.length; i++) {
+      for (let j = i + 1; j < distNames.length; j++) {
+        const layA = DISTRICT_LAYOUT[distNames[i]];
+        const layB = DISTRICT_LAYOUT[distNames[j]];
+        // Only connect districts that share flows
+        const pairKey = [distNames[i], distNames[j]].sort().join('↔');
+        if (!pairVolumes[pairKey]) continue;
+        sharedSegments.push({
+          districts: [distNames[i], distNames[j]],
+          from: { x: layA.cx, z: layA.cz },
+          to: { x: layB.cx, z: layB.cz }
+        });
+      }
+    }
+  }
+
+  sharedSegments.forEach(seg => {
+    const { from, to, districts: [dA, dB] } = seg;
+    const dx = to.x - from.x, dz = to.z - from.z;
+    const len = Math.sqrt(dx * dx + dz * dz);
+    if (len < 1) return;
+
+    const pairKey = [dA, dB].sort().join('↔');
+    const vol = pairVolumes[pairKey] || 0;
+    const ratio = vol / maxPairVolume;
+    const width = 6 + ratio * 10;
+
+    const nx = -dz / len * width / 2;
+    const nz = dx / len * width / 2;
+    const vertices = new Float32Array([
+      from.x + nx, roadY, from.z + nz,
+      from.x - nx, roadY, from.z - nz,
+      to.x + nx, roadY, to.z + nz,
+      to.x - nx, roadY, to.z - nz,
+    ]);
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+    geo.setIndex([0, 1, 2, 2, 1, 3]);
+    geo.computeVertexNormals();
+
+    const colorA = new THREE.Color(COLORS[dA] || 0x5EEAD4);
+    const colorB = new THREE.Color(COLORS[dB] || 0x5EEAD4);
+    const blended = colorA.clone().lerp(colorB, 0.5);
+    const mat = new THREE.MeshBasicMaterial({
+      color: blended, transparent: true, opacity: 0.85, side: THREE.DoubleSide,
+      depthWrite: false
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.receiveShadow = true;
+    scene.add(mesh);
+    roadMeshes.push(mesh);
+
+    const dashCount = Math.floor(len / 5);
+    if (dashCount > 0) {
+      const dashColor = blended.clone().multiplyScalar(3);
+      const dashMat = new THREE.MeshBasicMaterial({
+        color: dashColor, transparent: true, opacity: 0.4
+      });
+      const angle = Math.atan2(dx, dz);
+      for (let d = 1; d < dashCount; d++) {
+        const t = d / dashCount;
+        const dashGeo = new THREE.PlaneGeometry(0.2, 1.5);
+        dashGeo.rotateX(-Math.PI / 2);
+        dashGeo.rotateY(-angle);
+        const dash = new THREE.Mesh(dashGeo, dashMat);
+        dash.position.set(from.x + dx * t, roadY + 0.02, from.z + dz * t);
+        scene.add(dash);
+        roadMeshes.push(dash);
+      }
+    }
+  });
+
+}
+
+// ── Scene Setup ──
+const container = document.getElementById('canvas-container');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(COLORS.background);
+scene.fog = new THREE.FogExp2(COLORS.background, 0.0005);
+
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.5, 3000);
+camera.position.set(0, 500, 500);
+camera.lookAt(0, 0, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+container.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 30;
+controls.maxDistance = 1500;
+controls.maxPolarAngle = Math.PI / 2.1;
+controls.target.set(0, 0, 0);
+
+// ── Lighting ──
+const ambientLight = new THREE.AmbientLight(0x0F1729, 1.2);
+scene.add(ambientLight);
+
+const dirLight = new THREE.DirectionalLight(0xE2E8F0, 1.5);
+dirLight.position.set(80, 150, 60);
+dirLight.castShadow = true;
+dirLight.shadow.mapSize.set(4096, 4096);
+dirLight.shadow.camera.left = -700;
+dirLight.shadow.camera.right = 700;
+dirLight.shadow.camera.top = 700;
+dirLight.shadow.camera.bottom = -700;
+scene.add(dirLight);
+
+const fillLight = new THREE.DirectionalLight(0x5EEAD4, 0.4);
+fillLight.position.set(-60, 80, -40);
+scene.add(fillLight);
+
+// Point lights for city glow — distributed around circular layout
+// 6 lights at outer district positions (radius ~200, 60° intervals) + 1 center
+const glowRadius = 200;
+const glowHeight = 150;
+const glowColors = [0x10B981, 0x0D9488, 0x10B981, 0x0D9488, 0x10B981, 0x0D9488];
+const glowLights = [];
+for (let i = 0; i < 6; i++) {
+  const theta = (i * Math.PI * 2) / 6;
+  const gl = new THREE.PointLight(glowColors[i], 0.5, 500);
+  gl.position.set(glowRadius * Math.sin(theta), glowHeight, -glowRadius * Math.cos(theta));
+  scene.add(gl);
+  glowLights.push(gl);
+}
+const glowCenter = new THREE.PointLight(0x34D399, 0.3, 400);
+glowCenter.position.set(0, glowHeight, 0);
+scene.add(glowCenter);
+
+// ── Scene Theme ──
+// Updates Three.js scene elements to match CSS theme (dark/light)
+const SCENE_THEMES = {
+  dark: {
+    background: 0x0F172A,
+    fog: 0x0F172A,
+    fogDensity: 0.0005,
+    groundColor: 0x020a3a,
+    ambientColor: 0x0F1729,
+    ambientIntensity: 1.2,
+    dirLightIntensity: 1.5,
+    fillLightIntensity: 0.4,
+    glowIntensity: 0.5,
+    glowCenterIntensity: 0.3,
+    districtPlateMultiplier: 0.06,
+    districtBorderMultiplier: 0.7,
+    parkingPlateMultiplier: 0.08,
+    parkingLineMultiplier: 0.15,
+  },
+  light: {
+    background: 0xDFE3E8,
+    fog: 0xDFE3E8,
+    fogDensity: 0.0003,
+    groundColor: 0xDFE3E8,
+    ambientColor: 0xFFFFFF,
+    ambientIntensity: 2.0,
+    dirLightIntensity: 2.0,
+    fillLightIntensity: 0.6,
+    glowIntensity: 0.2,
+    glowCenterIntensity: 0.1,
+    districtPlateMultiplier: 0.15,
+    districtBorderMultiplier: 0.9,
+    parkingPlateMultiplier: 0.18,
+    parkingLineMultiplier: 0.3,
+  }
+};
+
+function applySceneTheme(theme) {
+  const t = SCENE_THEMES[theme] || SCENE_THEMES.dark;
+  // Background and fog
+  scene.background.set(t.background);
+  scene.fog.color.set(t.fog);
+  scene.fog.density = t.fogDensity;
+  // Ambient light
+  ambientLight.color.set(t.ambientColor);
+  ambientLight.intensity = t.ambientIntensity;
+  // Directional lights
+  dirLight.intensity = t.dirLightIntensity;
+  fillLight.intensity = t.fillLightIntensity;
+  // Glow point lights
+  glowLights.forEach(gl => { gl.intensity = t.glowIntensity; });
+  glowCenter.intensity = t.glowCenterIntensity;
+  // Ground meshes — district plates and borders
+  groundMeshes.forEach((mesh) => {
+    if (!mesh.material) return;
+    if (mesh.material.isMeshStandardMaterial) {
+      // District plate — recompute from district color
+      const districtName = mesh.userData && mesh.userData.district;
+      if (districtName && COLORS[districtName]) {
+        mesh.material.color.copy(new THREE.Color(COLORS[districtName]).multiplyScalar(t.districtPlateMultiplier));
+        mesh.material.needsUpdate = true;
+      }
+    } else if (mesh.material.isLineBasicMaterial) {
+      // District border
+      const districtName = mesh.userData && mesh.userData.district;
+      if (districtName && COLORS[districtName]) {
+        mesh.material.color.copy(new THREE.Color(COLORS[districtName]).multiplyScalar(t.districtBorderMultiplier));
+        mesh.material.needsUpdate = true;
+      }
+    }
+  });
+}
+
+// ── Raycaster for interaction ──
+const raycaster = new THREE.Raycaster();
+raycaster.params.Line = { threshold: 3 };
+raycaster.params.Line2 = { threshold: 5 };
+const mouse = new THREE.Vector2();
+const tooltipEl = document.getElementById('tooltip');
+let hoveredObj = null;
+let hoveredBuildingDistrict = null;   // district name of currently hovered building instance
+let hoveredBuildingInstId = -1;       // instanceId of currently hovered building instance
+let isolatedBuilding = null;          // { district, instanceId } or null
+let isolatedBuildingKey = null;       // key string of isolated building
+let pinnedTooltip = false;
+let currentFlows = {};
+
+// ── Gini Coefficient ──
+function calculateGini(values) {
+  if (values.length <= 1) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const n = sorted.length;
+  const total = sorted.reduce((s, v) => s + v, 0);
+  if (total === 0) return 0;
+  let weightedSum = 0;
+  for (let i = 0; i < n; i++) {
+    weightedSum += (2 * (i + 1) - n - 1) * sorted[i];
+  }
+  return weightedSum / (n * n * (total / n));
+}
+
+// ── Data Aggregation (pre-aggregated input) ──
+function coerceNumericFields(rows) {
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    row.total_sell_amount = parseFloat(row.total_sell_amount) || 0;
+    row.total_buy_amount = parseFloat(row.total_buy_amount) || 0;
+    row.flow_count = parseInt(row.flow_count) || 0;
+    row.unique_accounts = parseInt(row.unique_accounts) || 0;
+    row.avg_hours_in_cash = parseFloat(row.avg_hours_in_cash) || 0;
+    row.avg_sell_amount = parseFloat(row.avg_sell_amount) || 0;
+    row.days_in_cash = row.avg_hours_in_cash;
+  }
+}
+
+function resolveDisplayLabel(buildingId, buildingLabel) {
+  const isTicker = /^[A-Z]{1,5}$/.test(buildingId);
+  if (!isTicker && buildingLabel && buildingLabel !== buildingId) {
+    return buildingLabel;
+  }
+  return buildingId;
+}
+
+function aggregateData(rows) {
+  const buildings = {};  // key: "district|neighborhood|ticker"
+  const flows = {};      // key: "fromKey->toKey"
+  let totalVolume = 0;
+  let totalFlowCount = 0;
+  let crossDistrictFlowCount = 0;
+  let weightedDaysInCash = 0;
+  let totalUniqueAccounts = 0;
+
+  // Track max unique_accounts per district for pseudo-gini calculation
+  const districtMaxAccounts = {};
+
+  // First pass: find max unique_accounts per district for gini proxy
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const ua = row.unique_accounts;
+    if (!districtMaxAccounts[row.from_district] || ua > districtMaxAccounts[row.from_district]) districtMaxAccounts[row.from_district] = ua;
+    if (!districtMaxAccounts[row.to_district] || ua > districtMaxAccounts[row.to_district]) districtMaxAccounts[row.to_district] = ua;
+  }
+
+  // Main pass: each row is already a building-to-building aggregate
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const amount = row.total_sell_amount + row.total_buy_amount;
+    totalVolume += amount;
+    totalFlowCount += row.flow_count;
+    if (row.from_district !== row.to_district) crossDistrictFlowCount += row.flow_count;
+    weightedDaysInCash += row.days_in_cash * row.flow_count;
+    totalUniqueAccounts += row.unique_accounts;
+
+    // From building
+    const fromKey = `${row.from_district}|${row.from_neighborhood}|${row.from_building}`;
+    if (!buildings[fromKey]) {
+      const fromDisplayLabel = resolveDisplayLabel(row.from_building, row.from_building_label);
+      buildings[fromKey] = {
+        district: row.from_district, neighborhood: row.from_neighborhood,
+        buildingId: row.from_building,
+        ticker: fromDisplayLabel, label: fromDisplayLabel,
+        totalOutflow: 0, totalInflow: 0, flowCount: 0, uniqueAccounts: 0, totalDaysInCash: 0
+      };
+    }
+    buildings[fromKey].totalOutflow += row.total_sell_amount;
+    buildings[fromKey].flowCount += row.flow_count;
+    buildings[fromKey].uniqueAccounts += row.unique_accounts;
+    buildings[fromKey].totalDaysInCash += row.days_in_cash * row.flow_count;
+
+    // To building
+    const toKey = `${row.to_district}|${row.to_neighborhood}|${row.to_building}`;
+    if (!buildings[toKey]) {
+      const toDisplayLabel = resolveDisplayLabel(row.to_building, row.to_building_label);
+      buildings[toKey] = {
+        district: row.to_district, neighborhood: row.to_neighborhood,
+        buildingId: row.to_building,
+        ticker: toDisplayLabel, label: toDisplayLabel,
+        totalOutflow: 0, totalInflow: 0, flowCount: 0, uniqueAccounts: 0, totalDaysInCash: 0
+      };
+    }
+    buildings[toKey].totalInflow += row.total_buy_amount;
+    buildings[toKey].flowCount += row.flow_count;
+    buildings[toKey].uniqueAccounts += row.unique_accounts;
+    buildings[toKey].totalDaysInCash += row.days_in_cash * row.flow_count;
+
+    // Flow pair — each row maps directly to one flow (already aggregated)
+    const pairKey = `${fromKey}->${toKey}`;
+    if (!flows[pairKey]) {
+      flows[pairKey] = {
+        fromKey, toKey,
+        from_district: row.from_district, to_district: row.to_district,
+        from_neighborhood: row.from_neighborhood, to_neighborhood: row.to_neighborhood,
+        from_ticker: resolveDisplayLabel(row.from_building, row.from_building_label),
+        to_ticker: resolveDisplayLabel(row.to_building, row.to_building_label),
+        totalAmount: 0, count: 0, totalDaysInCash: 0,
+        uniqueAccounts: 0,
+        firstDate: null, lastDate: null
+      };
+    }
+    flows[pairKey].totalAmount += amount;
+    flows[pairKey].count += row.flow_count;
+    flows[pairKey].totalDaysInCash += row.days_in_cash * row.flow_count;
+    flows[pairKey].uniqueAccounts += row.unique_accounts;
+    if (row.first_flow_date) {
+      if (!flows[pairKey].firstDate || row.first_flow_date < flows[pairKey].firstDate)
+        flows[pairKey].firstDate = row.first_flow_date;
+    }
+    if (row.last_flow_date) {
+      if (!flows[pairKey].lastDate || row.last_flow_date > flows[pairKey].lastDate)
+        flows[pairKey].lastDate = row.last_flow_date;
+    }
+  }
+
+  // Compute pseudo-gini and lit fraction for each building
+  Object.values(buildings).forEach(b => {
+    const maxAccounts = districtMaxAccounts[b.district] || 1;
+    // Pseudo-gini: fewer unique accounts relative to district max = more concentrated
+    b.gini = 1 - Math.min(1, b.uniqueAccounts / maxAccounts);
+    b.litFraction = 1.0;
+    b.accountCount = b.uniqueAccounts;
+  });
+
+  // DEBUG: log distribution metrics
+  const sorted = Object.values(buildings).sort((a, b) => b.gini - a.gini);
+
+  return {
+    buildings, flows,
+    totalFlows: totalFlowCount,
+    totalVolume,
+    crossDistrict: crossDistrictFlowCount,
+    crossDistrictPct: totalFlowCount > 0 ? (crossDistrictFlowCount / totalFlowCount * 100) : 0,
+    avgDaysInCash: totalFlowCount > 0 ? (weightedDaysInCash / totalFlowCount) : 0,
+    totalUniqueAccounts
+  };
+}
+
+// ── Building Placement (Phase 3 — dynamic block layout) ──
+
+// Check if a point overlaps any parking lot (with margin)
+function overlapsParking(x, z, halfW, halfD) {
+  for (const lot of Object.values(PARKING_LOTS)) {
+    const margin = 2;
+    const lx0 = lot.x - lot.w / 2 - margin;
+    const lx1 = lot.x + lot.w / 2 + margin;
+    const lz0 = lot.z - lot.h / 2 - margin;
+    const lz1 = lot.z + lot.h / 2 + margin;
+    if (x + halfW > lx0 && x - halfW < lx1 && z + halfD > lz0 && z - halfD < lz1) return true;
+  }
+  return false;
+}
+
+function layoutBuildings(buildingsMap) {
+  globalNbRectMap = {};
+  const districtGroups = {};
+  Object.entries(buildingsMap).forEach(([key, b]) => {
+    if (!districtGroups[b.district]) districtGroups[b.district] = [];
+    districtGroups[b.district].push({ key, ...b, volume: b.totalOutflow + b.totalInflow });
+  });
+
+  const MAX_PER_DISTRICT = 200;
+  const positions = {};
+  const streetW = PIPELINE.blockStreetWidth;
+  const clearance = PIPELINE.buildingClearance;
+  Object.entries(districtGroups).forEach(([district, bldgs]) => {
+    const layout = DISTRICT_LAYOUT[district];
+    if (!layout) return;
+
+    bldgs.sort((a, b) => b.volume - a.volume);
+    const topBldgs = bldgs.slice(0, MAX_PER_DISTRICT);
+
+    // Group by neighborhood
+    const neighborhoods = {};
+    topBldgs.forEach(b => {
+      if (!neighborhoods[b.neighborhood]) neighborhoods[b.neighborhood] = [];
+      neighborhoods[b.neighborhood].push(b);
+    });
+
+    const sortedNbGroups = Object.entries(neighborhoods)
+      .sort((a, b) => b[1].length - a[1].length);
+
+    const maxVol = topBldgs.length > 0 ? topBldgs[0].volume : 1;
+    const offX = layout.cellOffsetX || 0;
+    const offY = layout.cellOffsetY || 0;
+    const polyW = layout.w;
+    const polyH = layout.h;
+    const polyX0 = layout.cx + offX - layout.w / 2;
+    const polyZ0 = layout.cz - offY - layout.h / 2;
+
+    // Treemap layout: recursively split district into neighborhood zones
+    // Each neighborhood gets area proportional to its building count
+    const nbItems = sortedNbGroups.map(([name, group]) => ({ name, count: group.length }));
+    function treemapSplit(rect, items) {
+      if (items.length === 0) return [];
+      if (items.length === 1) return [{ name: items[0].name, x: rect.x, z: rect.z, w: rect.w, h: rect.h }];
+
+      const total = items.reduce((s, it) => s + it.count, 0);
+      let bestSplit = 1, bestDiff = Infinity, runningSum = 0;
+      for (let i = 0; i < items.length - 1; i++) {
+        runningSum += items[i].count;
+        const diff = Math.abs(runningSum / total - 0.5);
+        if (diff < bestDiff) { bestDiff = diff; bestSplit = i + 1; }
+      }
+
+      const left = items.slice(0, bestSplit);
+      const right = items.slice(bestSplit);
+      const leftRatio = left.reduce((s, it) => s + it.count, 0) / total;
+      const gap = 15;
+
+      if (rect.w >= rect.h) {
+        const splitX = rect.x + rect.w * leftRatio;
+        return [
+          ...treemapSplit({ x: rect.x, z: rect.z, w: splitX - rect.x - gap / 2, h: rect.h }, left),
+          ...treemapSplit({ x: splitX + gap / 2, z: rect.z, w: rect.x + rect.w - splitX - gap / 2, h: rect.h }, right)
+        ];
+      } else {
+        const splitZ = rect.z + rect.h * leftRatio;
+        return [
+          ...treemapSplit({ x: rect.x, z: rect.z, w: rect.w, h: splitZ - rect.z - gap / 2 }, left),
+          ...treemapSplit({ x: rect.x, z: splitZ + gap / 2, w: rect.w, h: rect.z + rect.h - splitZ - gap / 2 }, right)
+        ];
+      }
+    }
+
+    const nbRects = treemapSplit({ x: polyX0, z: polyZ0, w: polyW, h: polyH }, nbItems);
+    const nbRectMap = {};
+    nbRects.forEach(r => { nbRectMap[r.name] = r; });
+    nbRects.forEach(r => {
+      globalNbRectMap[`${district}|${r.name}`] = { ...r, district };
+    });
+
+    // Place buildings using Gaussian scatter around neighborhood centroids,
+    // constrained only by the Voronoi polygon boundary (no rectangular zones)
+    const orderedBldgs = [];
+    const orderedCells = [];
+    const bldgW = 5;
+    const bldgD = 5;
+    const minPlaceDist = bldgW * 1.15;
+    const orgPts = layout.organicPoints || [];
+    const polyMaxR = orgPts.length > 0
+      ? Math.max(...orgPts.map(p => Math.sqrt(p.x * p.x + p.y * p.y)))
+      : Math.max(polyW, polyH) / 2;
+
+    const nbCount = sortedNbGroups.length;
+    const clusterTightness = nbCount <= 3 ? 1.2 : Math.max(0.6, 1.3 - nbCount * 0.06);
+
+    sortedNbGroups.forEach(([nbName, group]) => {
+      const rect = nbRectMap[nbName];
+      if (!rect) return;
+
+      const ncx = rect.x + rect.w / 2;
+      const ncz = rect.z + rect.h / 2;
+      const nbRadius = Math.sqrt(rect.w * rect.h / Math.PI) * 2.5;
+
+      group.forEach((b) => {
+        let _rngS = b.key.split('').reduce((s, c) => s + c.charCodeAt(0), 0) * 31 + b.key.length * 7;
+        const rng = () => { _rngS = (_rngS * 16807) % 2147483647; return _rngS / 2147483647; };
+
+        let px, pz, placed = false;
+        for (let attempts = 0; attempts < 200; attempts++) {
+          const spread = 0.8 + attempts * 0.005;
+          const u1 = Math.max(rng(), 0.001);
+          const u2 = rng();
+          const mag = Math.sqrt(-2 * Math.log(u1)) * nbRadius * spread * 0.7;
+          const angle = u2 * Math.PI * 2;
+          const rx = ncx + Math.cos(angle) * mag;
+          const rz = ncz + Math.sin(angle) * mag;
+
+          // Must be inside the Voronoi polygon (organic boundary)
+          const localX = rx - layout.cx;
+          const localZ = layout.cz - rz;
+          if (!pointInPolygon(localX, localZ, layout.organicPoints)) continue;
+
+          // Must be closer to own centroid than any other, with a buffer gap
+          const nbBuffer = bldgW * 2;
+          const dOwn = Math.sqrt((rx - ncx) ** 2 + (rz - ncz) ** 2);
+          let tooCloseToOther = false;
+          for (const [otherNb, otherGroup] of sortedNbGroups) {
+            if (otherNb === nbName) continue;
+            const oRect = nbRectMap[otherNb];
+            if (!oRect) continue;
+            const ocx = oRect.x + oRect.w / 2;
+            const ocz = oRect.z + oRect.h / 2;
+            const dOther = Math.sqrt((rx - ocx) ** 2 + (rz - ocz) ** 2);
+            if (dOther < dOwn + nbBuffer) { tooCloseToOther = true; break; }
+          }
+          if (tooCloseToOther) continue;
+
+          let tooClose = false;
+          for (const p of orderedCells) {
+            const dx = p.x - rx, dz = p.z - rz;
+            if (dx * dx + dz * dz < minPlaceDist * minPlaceDist) { tooClose = true; break; }
+          }
+          if (tooClose) continue;
+
+          if (!overlapsParking(rx, rz, bldgW / 2 + 1, bldgD / 2 + 1)) {
+            px = rx; pz = rz; placed = true;
+            break;
+          }
+        }
+
+        if (!placed) {
+          // Fallback: random placement within Voronoi, closer to own centroid
+          for (let fb = 0; fb < 200; fb++) {
+            const fbAngle = rng() * Math.PI * 2;
+            const fbDist = rng() * nbRadius * 1.5;
+            const fbx = ncx + Math.cos(fbAngle) * fbDist;
+            const fbz = ncz + Math.sin(fbAngle) * fbDist;
+            const flx = fbx - layout.cx;
+            const fly = layout.cz - fbz;
+            if (!pointInPolygon(flx, fly, layout.organicPoints)) continue;
+            const dOwn = Math.sqrt((fbx - ncx) ** 2 + (fbz - ncz) ** 2);
+            let skip = false;
+            for (const [otherNb] of sortedNbGroups) {
+              if (otherNb === nbName) continue;
+              const oR = nbRectMap[otherNb];
+              if (!oR) continue;
+              const dO = Math.sqrt((fbx - (oR.x + oR.w/2)) ** 2 + (fbz - (oR.z + oR.h/2)) ** 2);
+              if (dO < dOwn + bldgW * 2) { skip = true; break; }
+            }
+            if (skip) continue;
+            let tooClose = false;
+            for (const p of orderedCells) {
+              const dx = p.x - fbx, dz = p.z - fbz;
+              if (dx * dx + dz * dz < minPlaceDist * minPlaceDist) { tooClose = true; break; }
+            }
+            if (tooClose) continue;
+            if (!overlapsParking(fbx, fbz, bldgW / 2 + 1, bldgD / 2 + 1)) {
+              px = fbx; pz = fbz; placed = true;
+              break;
+            }
+          }
+          if (!placed) return;
+        }
+
+        orderedBldgs.push(b);
+        orderedCells.push({ x: px, z: pz });
+      });
+    });
+
+    // Neighborhood aspect ratios — vary building footprint by neighborhood character
+    const NEIGHBORHOOD_ASPECT = {
+      'Finance': { wScale: 0.75, dScale: 0.75 },
+      'Technology': { wScale: 0.8, dScale: 0.85 },
+      'Healthcare': { wScale: 0.9, dScale: 1.0 },
+      'Manufacturing': { wScale: 1.3, dScale: 1.2 },
+      'Energy': { wScale: 1.2, dScale: 1.15 },
+      'Utilities': { wScale: 1.15, dScale: 1.1 },
+      'Real Estate': { wScale: 1.1, dScale: 1.25 },
+      'Consumer Goods': { wScale: 1.0, dScale: 1.0 },
+      'Government': { wScale: 1.4, dScale: 1.0 },
+      'Corporate': { wScale: 0.85, dScale: 0.8 },
+      'Municipal': { wScale: 1.3, dScale: 1.1 },
+      'Treasury': { wScale: 0.9, dScale: 0.9 },
+      'Equity ETF': { wScale: 0.85, dScale: 0.85 },
+      'Bond ETF': { wScale: 1.0, dScale: 0.9 },
+      'Index Fund': { wScale: 0.95, dScale: 0.95 },
+    };
+
+    // Compute final positions with height/footprint for each placed building
+    orderedBldgs.forEach((b, i) => {
+      if (i >= orderedCells.length) return;
+      const cell = orderedCells[i];
+
+      const aspect = NEIGHBORHOOD_ASPECT[b.neighborhood] || { wScale: 1.0, dScale: 1.0 };
+      const nbW = bldgW * aspect.wScale;
+      const nbD = bldgD * aspect.dScale;
+
+      const aum = aumLookup[b.buildingId || b.ticker] || 0;
+      let height = aum > 0
+        ? 2 + Math.log10(aum + 1) / Math.log10(maxAum + 1) * 72
+        : 2 + (b.volume / maxVol) * 24;
+
+      let finalW = nbW + ((height - 2) / 72 * 2);
+      let finalD = nbD + ((height - 2) / 72 * 2);
+
+      positions[b.key] = {
+        x: cell.x, z: cell.z,
+        width: finalW,
+        depth: finalD,
+        height,
+        district: b.district,
+        neighborhood: b.neighborhood,
+        ticker: b.ticker,
+        label: b.label || b.ticker,
+        volume: b.volume,
+        totalInflow: b.totalInflow,
+        totalOutflow: b.totalOutflow,
+        flowCount: b.flowCount,
+        litFraction: b.litFraction,
+        gini: b.gini,
+        accountCount: b.accountCount,
+        aum: aum,
+        totalDaysInCash: b.totalDaysInCash || 0
+      };
+    });
+  });
+
+  // Post-placement verification: drop any building whose footprint corners
+  // extend outside the Voronoi polygon. This catches edge cases where the
+  // building center is inside but the footprint (center +/- half-width/depth)
+  // protrudes past the cell boundary.
+  const keysToRemove = [];
+  Object.entries(positions).forEach(([key, pos]) => {
+    const layout = DISTRICT_LAYOUT[pos.district];
+    if (!layout || !layout.organicPoints) return;
+    const halfW = pos.width / 2;
+    const halfD = pos.depth / 2;
+    const corners = [
+      { wx: pos.x - halfW, wz: pos.z - halfD },
+      { wx: pos.x + halfW, wz: pos.z - halfD },
+      { wx: pos.x + halfW, wz: pos.z + halfD },
+      { wx: pos.x - halfW, wz: pos.z + halfD },
+    ];
+    let outsideCornerFound = false;
+    for (const c of corners) {
+      const lx = c.wx - layout.cx;
+      const lz = layout.cz - c.wz;
+      if (!pointInPolygon(lx, lz, layout.organicPoints)) {
+        outsideCornerFound = true;
+        break;
+      }
+    }
+    if (!outsideCornerFound) return;
+    // Try to nudge the building inward toward district center
+    const dx = layout.cx - pos.x;
+    const dz = layout.cz - pos.z;
+    const dist = Math.sqrt(dx * dx + dz * dz);
+    if (dist < 0.1) { keysToRemove.push(key); return; }
+    let lo = 0, hi = 1, bestT = -1;
+    for (let step = 0; step < 12; step++) {
+      const mid = (lo + hi) / 2;
+      const nx = pos.x + dx * mid;
+      const nz = pos.z + dz * mid;
+      const allInside =
+        pointInPolygon(nx - halfW - layout.cx, layout.cz - (nz - halfD), layout.organicPoints) &&
+        pointInPolygon(nx + halfW - layout.cx, layout.cz - (nz - halfD), layout.organicPoints) &&
+        pointInPolygon(nx + halfW - layout.cx, layout.cz - (nz + halfD), layout.organicPoints) &&
+        pointInPolygon(nx - halfW - layout.cx, layout.cz - (nz + halfD), layout.organicPoints);
+      if (allInside) { bestT = mid; hi = mid; }
+      else { lo = mid; }
+    }
+    if (bestT >= 0) {
+      pos.x = pos.x + dx * bestT;
+      pos.z = pos.z + dz * bestT;
+    } else {
+      keysToRemove.push(key);
+    }
+  });
+  keysToRemove.forEach(k => delete positions[k]);
+
+  return positions;
+}
+
+// ── 3D Rendering ──
+let buildingMeshes = [];       // InstancedMesh objects (one per district + one roof per district)
+let buildingInstanceData = {};  // district -> { mesh, roofMesh, instances: [ { key, userData } ] }
+let nightMode = false;
+let nightModeEmissiveMaps = {};  // district -> THREE.Texture
+let hoveredInstanceId = -1;
+let labelSprites = [];
+let nbLabelSprites = [];
+let districtLabelSprites = {};
+let groundMeshes = [];
+let roadMeshes = [];
+let currentPositions = {};
+let interactables = [];
+let arcMeshes = [];
+let arcInteractables = [];
+let globalNbRectMap = {};  // "district|neighborhood" -> { x, z, w, h, district, neighborhood }
+let flowsByBuilding = {};  // buildingKey -> [{ flow, otherKey, isOutflow }]
+let mouseMoved = false;
+
+function clearArcs() {
+  arcMeshes.forEach(m => {
+    scene.remove(m);
+    if (m.geometry) m.geometry.dispose();
+    if (m.material) m.material.dispose();
+  });
+  arcMeshes = [];
+  arcInteractables = [];
+}
+
+function showArcsForBuilding(buildingKey) {
+  clearArcs();
+  const fromPos = currentPositions[buildingKey];
+  if (!fromPos) return;
+
+  // Collect all connected flows with their metadata (using pre-built index)
+  const entries = flowsByBuilding[buildingKey] || [];
+  const connectedFlows = [];
+  entries.forEach(({ flow, otherKey, isOutflow }) => {
+    const toPos = currentPositions[otherKey];
+    if (!toPos) return;
+    connectedFlows.push({ flow, otherKey, isOutflow, toPos });
+  });
+
+  if (connectedFlows.length === 0) return;
+
+  // Cap arcs at top 25 by amount to prevent hundreds of geometry objects on popular buildings
+  connectedFlows.sort((a, b) => b.flow.totalAmount - a.flow.totalAmount);
+  const maxArcs = 25;
+  const displayFlows = connectedFlows.length > maxArcs ? connectedFlows.slice(0, maxArcs) : connectedFlows;
+
+  // Calculate max flow amount for relative percentage mapping
+  const maxFlowAmount = Math.max(...displayFlows.map(cf => cf.flow.totalAmount));
+
+  const resolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
+
+  displayFlows.forEach(({ flow, otherKey, isOutflow, toPos }) => {
+    const startY = fromPos.height + 2;
+    const endY = toPos.height + 2;
+    const dx = toPos.x - fromPos.x;
+    const dz = toPos.z - fromPos.z;
+    const distance = Math.sqrt(dx * dx + dz * dz);
+    const midX = (fromPos.x + toPos.x) / 2;
+    const midZ = (fromPos.z + toPos.z) / 2;
+    const midY = Math.max(startY, endY) + 15 + distance * 0.15;
+
+    const curve = new THREE.QuadraticBezierCurve3(
+      new THREE.Vector3(fromPos.x, startY, fromPos.z),
+      new THREE.Vector3(midX, midY, midZ),
+      new THREE.Vector3(toPos.x, endY, toPos.z)
+    );
+
+    const arcColor = isOutflow
+      ? (COLORS[flow.from_district] || 0x5EEAD4)
+      : (COLORS[flow.to_district] || 0x5EEAD4);
+
+    // Compute relative ratio (0 to 1) for dash/width mapping
+    const ratio = maxFlowAmount > 0 ? flow.totalAmount / maxFlowAmount : 1;
+
+    // Dash parameters: high ratio = solid, low ratio = dotted
+    const dashSize = 0.5 + ratio * 99.5;
+    const gapSize = 1.5 * (1 - ratio);
+    const lineWidth = 2.5 + ratio * 5.5; // 2.5px to 8px
+
+    // Get points along the curve for LineGeometry
+    const curvePoints = curve.getPoints(32);
+    const positions = [];
+    curvePoints.forEach(p => positions.push(p.x, p.y, p.z));
+
+    const lineGeo = new LineGeometry();
+    lineGeo.setPositions(positions);
+
+    const useDashed = gapSize > 0.01; // effectively solid when gap ~0
+
+    const lineMat = new LineMaterial({
+      color: arcColor,
+      transparent: true,
+      opacity: 0.7,
+      linewidth: lineWidth,
+      resolution: resolution,
+      dashed: useDashed,
+      dashSize: useDashed ? dashSize : 1,
+      gapSize: useDashed ? gapSize : 0,
+      dashScale: 1
+    });
+
+    const line = new Line2(lineGeo, lineMat);
+    line.computeLineDistances();
+    line.userData = { type: 'flowEndpoint', flow, isOutflow, otherKey };
+    scene.add(line);
+    arcMeshes.push(line);
+    arcInteractables.push(line);
+  });
+}
+
+function disposeMesh(m) {
+  scene.remove(m);
+  if (m.geometry) m.geometry.dispose();
+  if (m.material) {
+    if (Array.isArray(m.material)) m.material.forEach(mat => mat.dispose());
+    else m.material.dispose();
+  }
+  m.children.forEach(child => {
+    if (child.geometry) child.geometry.dispose();
+    if (child.material) child.material.dispose();
+  });
+}
+
+function clearScene() {
+  clearArcs();
+  // Dispose building InstancedMesh objects
+  buildingMeshes.forEach(m => {
+    scene.remove(m);
+    if (m.geometry) m.geometry.dispose();
+    if (m.material) {
+      if (Array.isArray(m.material)) m.material.forEach(mat => { if (mat.map) mat.map.dispose(); mat.dispose(); });
+      else { if (m.material.map) m.material.map.dispose(); m.material.dispose(); }
+    }
+  });
+  labelSprites.forEach(m => { scene.remove(m); if (m.material) { if (m.material.map) m.material.map.dispose(); m.material.dispose(); } });
+  groundMeshes.forEach(disposeMesh);
+  roadMeshes.forEach(disposeMesh);
+  buildingMeshes = [];
+  buildingInstanceData = {};
+  labelSprites = [];
+  nbLabelSprites = [];
+  districtLabelSprites = {};
+  groundMeshes = [];
+  roadMeshes = [];
+  if (dotInstanceMesh) {
+    scene.remove(dotInstanceMesh);
+    dotInstanceMesh.geometry.dispose();
+    dotInstanceMesh.material.dispose();
+    dotInstanceMesh = null;
+  }
+  dotData = [];
+  dotFreeList = [];
+  flowPool = [];
+  interactables = [];
+  hoveredInstanceId = -1;
+}
+
+function createGroundAndRoads() {
+  // Compute ground plane size from all districts + roads
+  const allLayouts = Object.values(DISTRICT_LAYOUT);
+  const minX = Math.min(...allLayouts.map(l => l.cx - l.w / 2)) - 30;
+  const maxX = Math.max(...allLayouts.map(l => l.cx + l.w / 2)) + 30;
+  const minZ = Math.min(...allLayouts.map(l => l.cz - l.h / 2)) - 30;
+  const maxZ = Math.max(...allLayouts.map(l => l.cz + l.h / 2)) + 30;
+  const groundW = maxX - minX;
+  const groundH = maxZ - minZ;
+  const groundCX = (minX + maxX) / 2;
+  const groundCZ = (minZ + maxZ) / 2;
+
+  // Main ground plane — hidden (district plates provide the ground surface)
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const themeVals = SCENE_THEMES[currentTheme] || SCENE_THEMES.dark;
+
+  // District ground plates (organic shapes)
+  Object.entries(DISTRICT_LAYOUT).forEach(([name, layout]) => {
+    const color = COLORS[name] || 0x333333;
+
+    // Organic extruded ground plate
+    const extrudeSettings = {
+      depth: 0.6,
+      bevelEnabled: true,
+      bevelThickness: 0.2,
+      bevelSize: 0.8,
+      bevelSegments: 2,
+    };
+    const geo = new THREE.ExtrudeGeometry(layout.organicShape, extrudeSettings);
+    geo.rotateX(-Math.PI / 2);
+    const mat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(color).multiplyScalar(themeVals.districtPlateMultiplier),
+      roughness: 0.9,
+      metalness: 0.05,
+      transparent: true,
+      opacity: 0.5,
+    });
+    const plate = new THREE.Mesh(geo, mat);
+    plate.position.set(layout.cx, 0, layout.cz);
+    plate.receiveShadow = true;
+    plate.userData.district = name;
+    scene.add(plate);
+    groundMeshes.push(plate);
+
+    // Organic border outline
+    const borderPts = layout.organicPoints.map(p => new THREE.Vector3(p.x, 0.15, -p.y));
+    borderPts.push(borderPts[0].clone());
+    const borderGeo = new THREE.BufferGeometry().setFromPoints(borderPts);
+    const borderMat = new THREE.LineBasicMaterial({
+      color: new THREE.Color(color).multiplyScalar(themeVals.districtBorderMultiplier),
+      transparent: true, opacity: 0.8
+    });
+    const border = new THREE.Line(borderGeo, borderMat);
+    border.position.set(layout.cx, 0, layout.cz);
+    border.userData.district = name;
+    scene.add(border);
+    groundMeshes.push(border);
+
+    // (glow halo removed — overlapping transparent shapes cluttered tight layouts)
+
+    // District label on the ground
+    const canvas = document.createElement('canvas');
+    canvas.width = 512; canvas.height = 80;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 512, 80);
+    ctx.font = 'bold 42px Inter, system-ui, sans-serif';
+    ctx.globalAlpha = 0.9;
+    ctx.textAlign = 'center';
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#000000';
+    ctx.strokeText(name.toUpperCase(), 256, 52);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText(name.toUpperCase(), 256, 52);
+    const texture = new THREE.CanvasTexture(canvas);
+    const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 0.9 });
+    const sprite = new THREE.Sprite(spriteMat);
+    sprite.position.set(layout.cx, 25, layout.cz);
+    sprite.scale.set(70, 8.75, 1);
+    scene.add(sprite);
+    labelSprites.push(sprite);
+    districtLabelSprites[name] = sprite;
+  });
+
+  const dashMat = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
+
+  // ── Per-district parking lots (dynamically positioned) ──
+  Object.entries(PARKING_LOTS).forEach(([district, lot]) => {
+    // Parking plate
+    const plateGeo = new THREE.PlaneGeometry(lot.w, lot.h);
+    const plateMat = new THREE.MeshLambertMaterial({
+      color: new THREE.Color(COLORS[district]).multiplyScalar(themeVals.parkingPlateMultiplier),
+      transparent: true, opacity: 0.8
+    });
+    const plate = new THREE.Mesh(plateGeo, plateMat);
+    plate.rotation.x = -Math.PI / 2;
+    plate.position.set(lot.x, 0.22, lot.z);
+    plate.receiveShadow = true;
+    scene.add(plate);
+    groundMeshes.push(plate);
+
+    // Parking lot lines
+    const lotLineMat = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(COLORS[district]).multiplyScalar(themeVals.parkingLineMultiplier)
+    });
+    for (let lx = lot.x - lot.w/2 + 1; lx <= lot.x + lot.w/2 - 1; lx += 2) {
+      const lotLine = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.15, lot.h * 0.7),
+        lotLineMat
+      );
+      lotLine.rotation.x = -Math.PI / 2;
+      lotLine.position.set(lx, 0.25, lot.z);
+      scene.add(lotLine);
+      roadMeshes.push(lotLine);
+    }
+
+    // "P" label sprite
+    const pCanvas = document.createElement('canvas');
+    pCanvas.width = 64; pCanvas.height = 64;
+    const pCtx = pCanvas.getContext('2d');
+    pCtx.font = 'bold 40px Inter, system-ui, sans-serif';
+    pCtx.textAlign = 'center';
+    pCtx.strokeStyle = '#000000';
+    pCtx.lineWidth = 3;
+    pCtx.strokeText('P', 32, 46);
+    pCtx.fillStyle = '#FFFFFF';
+    pCtx.fillText('P', 32, 46);
+    const pTex = new THREE.CanvasTexture(pCanvas);
+    const pSpriteMat = new THREE.SpriteMaterial({ map: pTex, transparent: true, opacity: 0.6 });
+    const pSprite = new THREE.Sprite(pSpriteMat);
+    pSprite.position.set(lot.x, 3, lot.z);
+    pSprite.scale.set(4, 4, 1);
+    scene.add(pSprite);
+    labelSprites.push(pSprite);
+  });
+
+
+}
+
+// Helper: create a canvas texture with window grid pattern for one building face
+function createWindowTexture(faceWidth, faceHeight, buildingColor, litFraction, netRatio) {
+  const canvasW = 128;
+  const canvasH = Math.max(32, Math.round(canvasW * (faceHeight / faceWidth)));
+
+  const canvas = document.createElement('canvas');
+  canvas.width = canvasW;
+  canvas.height = canvasH;
+  const ctx = canvas.getContext('2d');
+
+  // Fill background with building color
+  const bgR = Math.round(buildingColor.r * 255);
+  const bgG = Math.round(buildingColor.g * 255);
+  const bgB = Math.round(buildingColor.b * 255);
+  ctx.fillStyle = `rgb(${bgR},${bgG},${bgB})`;
+  ctx.fillRect(0, 0, canvasW, canvasH);
+
+  // Determine window color based on net flow direction
+  let windowColor;
+  if (netRatio > 0.05) {
+    const t = Math.min(netRatio, 1);
+    const base = new THREE.Color(0x5EEAD4);
+    const bright = new THREE.Color(0xA7F3D0);
+    windowColor = base.lerp(bright, t);
+  } else if (netRatio < -0.05) {
+    const t = Math.min(Math.abs(netRatio), 1);
+    const base = new THREE.Color(0x5EEAD4);
+    const dark = new THREE.Color(0x0F172A);
+    windowColor = base.lerp(dark, t);
+  } else {
+    windowColor = new THREE.Color(0x5EEAD4);
+  }
+
+  const wR = Math.round(windowColor.r * 255);
+  const wG = Math.round(windowColor.g * 255);
+  const wB = Math.round(windowColor.b * 255);
+
+  // Window grid parameters
+  const cols = Math.max(2, Math.floor(faceWidth / 1.2));
+  const rows = Math.max(1, Math.floor(faceHeight / 4));
+
+  const marginX = canvasW * 0.1;
+  const marginTop = canvasH * 0.05;
+  const marginBot = canvasH * 0.05;
+  const gapX = 2;
+  const gapY = 2;
+  const usableW = canvasW - marginX * 2 - gapX * (cols - 1);
+  const usableH = canvasH - marginTop - marginBot - gapY * (rows - 1);
+  const winW = usableW / cols;
+  const winH = usableH / rows;
+
+  const litFrac = litFraction !== undefined ? litFraction : 0.5;
+  const litThreshold = 1 - litFrac;
+
+  for (let r = 0; r < rows; r++) {
+    // Row 0 = bottom of building, row (rows-1) = top
+    const floorPosition = (r + 0.5) / rows;
+
+    let wOpacity;
+    if (floorPosition >= litThreshold) {
+      wOpacity = 0.6 + litFrac * 0.24;
+    } else {
+      const fadePct = (litThreshold - floorPosition) / Math.max(litThreshold, 0.01);
+      wOpacity = 0.05 + 0.07 * (1 - fadePct);
+    }
+
+    // Canvas Y: top of canvas = top of building, so invert row order
+    const cy = marginTop + (rows - 1 - r) * (winH + gapY);
+
+    for (let c = 0; c < cols; c++) {
+      const cx = marginX + c * (winW + gapX);
+      ctx.fillStyle = `rgba(${wR},${wG},${wB},${wOpacity.toFixed(3)})`;
+      ctx.fillRect(cx, cy, winW, winH);
+    }
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  return texture;
+}
+
+// Helper: create a shared tiling window grid texture for InstancedMesh buildings.
+// All buildings share this texture; per-instance color provides the building tint.
+// The texture is a semi-transparent window grid on a neutral base so the instance
+// color shows through as the building body color.
+function createSharedWindowTexture() {
+  const canvasW = 128;
+  const canvasH = 128;
+  const cols = 6;
+  const rows = 16;
+  const marginX = 4;
+  const marginY = 3;
+  const gapX = 4;
+  const gapY = 3;
+  const usableW = canvasW - marginX * 2;
+  const usableH = canvasH - marginY * 2;
+  const winW = (usableW - gapX * (cols - 1)) / cols;
+  const winH = (usableH - gapY * (rows - 1)) / rows;
+
+  // Pre-roll which windows are lit (shared between both maps)
+  const litGrid = [];
+  for (let r = 0; r < rows; r++) {
+    litGrid[r] = [];
+    const floorDark = Math.random() < 0.08;
+    for (let c = 0; c < cols; c++) {
+      litGrid[r][c] = !floorDark && Math.random() > 0.22;
+    }
+  }
+
+  // ── COLOR MAP: dark walls, subtle window tint ──
+  const colorCanvas = document.createElement('canvas');
+  colorCanvas.width = canvasW;
+  colorCanvas.height = canvasH;
+  const cCtx = colorCanvas.getContext('2d');
+  cCtx.fillStyle = 'rgb(150, 155, 165)';
+  cCtx.fillRect(0, 0, canvasW, canvasH);
+  for (let r = 0; r < rows; r++) {
+    const cy = marginY + r * (winH + gapY);
+    for (let c = 0; c < cols; c++) {
+      const cx = marginX + c * (winW + gapX);
+      if (litGrid[r][c]) {
+        cCtx.fillStyle = 'rgb(200, 200, 195)';
+      } else {
+        cCtx.fillStyle = 'rgb(100, 105, 115)';
+      }
+      cCtx.fillRect(cx, cy, winW, winH);
+    }
+  }
+
+  // ── EMISSIVE MAP: black walls, bright warm windows ──
+  const emitCanvas = document.createElement('canvas');
+  emitCanvas.width = canvasW;
+  emitCanvas.height = canvasH;
+  const eCtx = emitCanvas.getContext('2d');
+  eCtx.fillStyle = 'rgb(0, 0, 0)';
+  eCtx.fillRect(0, 0, canvasW, canvasH);
+  for (let r = 0; r < rows; r++) {
+    const cy = marginY + r * (winH + gapY);
+    for (let c = 0; c < cols; c++) {
+      const cx = marginX + c * (winW + gapX);
+      if (litGrid[r][c]) {
+        const warmth = Math.random();
+        const brightness = 0.7 + Math.random() * 0.3;
+        const R = Math.round(255 * brightness);
+        const G = Math.round((210 + warmth * 40) * brightness);
+        const B = Math.round((120 + (1 - warmth) * 60) * brightness);
+        eCtx.fillStyle = `rgb(${R}, ${G}, ${B})`;
+      } else {
+        eCtx.fillStyle = 'rgb(0, 0, 0)';
+      }
+      eCtx.fillRect(cx, cy, winW, winH);
+    }
+  }
+
+  function makeTexture(canvas) {
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.minFilter = THREE.LinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    tex.wrapS = THREE.RepeatWrapping;
+    tex.wrapT = THREE.RepeatWrapping;
+    return tex;
+  }
+
+  return { colorMap: makeTexture(colorCanvas), emissiveMap: makeTexture(emitCanvas) };
+}
+
+// Helper: set emissive on a mesh (works for both regular and instanced materials)
+function setMeshEmissive(mesh, emissiveColor) {
+  if (Array.isArray(mesh.material)) {
+    mesh.material.forEach(mat => { if (mat.emissive) mat.emissive.copy(emissiveColor); });
+  } else if (mesh.material && mesh.material.emissive) {
+    mesh.material.emissive.copy(emissiveColor);
+  }
+}
+
+// Helper: set emissive via RGB values
+function setMeshEmissiveRGB(mesh, r, g, b) {
+  const c = new THREE.Color(r, g, b);
+  if (Array.isArray(mesh.material)) {
+    mesh.material.forEach(mat => { if (mat.emissive) mat.emissive.copy(c); });
+  } else if (mesh.material && mesh.material.emissive) {
+    mesh.material.emissive.copy(c);
+  }
+}
+
+// Helper: set emissive highlight (white * scalar)
+function setMeshEmissiveHighlight(mesh, scalar) {
+  const c = new THREE.Color(0xffffff).multiplyScalar(scalar);
+  if (Array.isArray(mesh.material)) {
+    mesh.material.forEach(mat => { if (mat.emissive) mat.emissive.copy(c); });
+  } else if (mesh.material && mesh.material.emissive) {
+    mesh.material.emissive.copy(c);
+  }
+}
+
+// Helper: set opacity on a mesh
+function setMeshOpacity(mesh, opacity) {
+  if (Array.isArray(mesh.material)) {
+    mesh.material.forEach(mat => { mat.opacity = opacity; mat.transparent = true; });
+  } else {
+    mesh.material.opacity = opacity;
+    mesh.material.transparent = true;
+  }
+}
+
+// Helper: look up building instance data from a raycast hit on an InstancedMesh
+// Returns { district, instanceId, data } or null
+function getBuildingFromHit(hit) {
+  const obj = hit.object;
+  if (!obj.userData || obj.userData.type !== 'buildingInstanced') return null;
+  const district = obj.userData.district;
+  const distData = buildingInstanceData[district];
+  if (!distData || hit.instanceId === undefined) return null;
+  const instanceId = hit.instanceId;
+  if (instanceId < 0 || instanceId >= distData.instances.length) return null;
+  return {
+    district,
+    instanceId,
+    mesh: distData.mesh,
+    data: distData.instances[instanceId]
+  };
+}
+
+// Helper: highlight a building instance by setting its color brighter
+function highlightBuildingInstance(district, instanceId) {
+  const distData = buildingInstanceData[district];
+  if (!distData) return;
+  const inst = distData.instances[instanceId];
+  if (!inst) return;
+  const highlight = inst.color.clone().lerp(new THREE.Color(0xffffff), 0.35);
+  distData.mesh.setColorAt(instanceId, highlight);
+  distData.mesh.instanceColor.needsUpdate = true;
+}
+
+// Helper: restore a building instance to its original color
+function restoreBuildingInstance(district, instanceId) {
+  const distData = buildingInstanceData[district];
+  if (!distData) return;
+  const inst = distData.instances[instanceId];
+  if (!inst) return;
+  distData.mesh.setColorAt(instanceId, inst.color);
+  distData.mesh.instanceColor.needsUpdate = true;
+}
+
+function createBuildings(positions) {
+  // Build dynamic neighborhood color map: per district, assign each unique
+  // neighborhood a distinct color by shifting hue and lightness within the
+  // district's color family. Much more distinct than lightness-only shading.
+  const districtNeighborhoods = {};
+  Object.values(positions).forEach(p => {
+    if (!districtNeighborhoods[p.district]) districtNeighborhoods[p.district] = new Set();
+    districtNeighborhoods[p.district].add(p.neighborhood);
+  });
+  const neighborhoodColorMap = {};  // "district|neighborhood" -> THREE.Color
+  Object.entries(districtNeighborhoods).forEach(([district, nbSet]) => {
+    const neighborhoods = [...nbSet].sort();
+    const count = neighborhoods.length;
+    const baseColor = new THREE.Color(COLORS[district] || 0x888888);
+    const baseHSL = {};
+    baseColor.getHSL(baseHSL);
+
+    neighborhoods.forEach((nb, idx) => {
+      // Shift hue broadly across neighborhoods for maximum visual distinction
+      const t = count > 1 ? idx / (count - 1) : 0.5;
+      const hueShift = (t - 0.5) * 0.22;
+      const satShift = (t - 0.5) * 0.4;
+      const lightShift = (t - 0.5) * 0.55;
+
+      const h = ((baseHSL.h + hueShift) % 1 + 1) % 1;
+      const s = Math.max(0.4, Math.min(1.0, baseHSL.s + satShift));
+      const l = Math.max(0.25, Math.min(0.75, 0.5 + lightShift * 0.3));
+
+      const color = new THREE.Color().setHSL(h, s, l);
+      neighborhoodColorMap[`${district}|${nb}`] = color;
+    });
+  });
+
+  // ── Group buildings by district for InstancedMesh creation ──
+  const districtBuildings = {};  // district -> [ { key, p, color, emissiveColor } ]
+  Object.entries(positions).forEach(([key, p]) => {
+    const color = neighborhoodColorMap[`${p.district}|${p.neighborhood}`]
+      || new THREE.Color(COLORS[p.district] || 0x888888);
+    const emissiveStrength = 0.30;
+    const emissiveColor = color.clone().multiplyScalar(emissiveStrength);
+
+    if (!districtBuildings[p.district]) districtBuildings[p.district] = [];
+    districtBuildings[p.district].push({ key, p, color, emissiveColor });
+  });
+
+  // ── Create one InstancedMesh per district ──
+  const _bldgDummy = new THREE.Object3D();
+  const unitGeo = new THREE.BoxGeometry(1, 1, 1);  // unit cube, scaled per instance
+  const uvAttr = unitGeo.attributes.uv;
+  for (let i = 8; i < 12; i++) { uvAttr.setXY(i, 0, 0); }
+  uvAttr.needsUpdate = true;
+  const roofUnitGeo = new THREE.BoxGeometry(1, 1, 1);
+
+  // Create a shared window grid texture for all buildings
+  const windowTextures = createSharedWindowTexture();
+
+  Object.entries(districtBuildings).forEach(([district, bldgList]) => {
+    const count = bldgList.length;
+    if (count === 0) return;
+
+    // ── All districts use skyscraper geometry (BoxGeometry) ──
+    const baseColor = new THREE.Color(COLORS[district] || 0x888888);
+    const emissiveMapTex = windowTextures.emissiveMap.clone();
+    nightModeEmissiveMaps[district] = emissiveMapTex;
+
+    const bldgMat = new THREE.MeshPhongMaterial({
+      map: windowTextures.colorMap.clone(),
+      color: new THREE.Color(0.75, 0.75, 0.75),
+      shininess: 30,
+      emissive: new THREE.Color(1.0, 0.95, 0.85),
+      emissiveIntensity: 0.35,
+      emissiveMap: emissiveMapTex.clone(),
+    });
+    bldgMat.onBeforeCompile = function(shader) {
+      shader.vertexShader = shader.vertexShader.replace(
+        'void main() {',
+        'attribute float aGiniCutoff;\nvarying float vGiniCutoff;\nvarying float vBuildingV;\nvoid main() {'
+      );
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <begin_vertex>',
+        '#include <begin_vertex>\nvGiniCutoff = aGiniCutoff;\nvBuildingV = uv.y;'
+      );
+      shader.fragmentShader = shader.fragmentShader.replace(
+        'void main() {',
+        'varying float vGiniCutoff;\nvarying float vBuildingV;\nvoid main() {'
+      );
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <emissivemap_fragment>',
+        '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= smoothstep(vGiniCutoff - 0.05, vGiniCutoff + 0.05, vBuildingV);'
+      );
+    };
+
+    const districtGeo = unitGeo.clone();
+    const giniCutoffs = new Float32Array(count);
+    districtGeo.setAttribute('aGiniCutoff', new THREE.InstancedBufferAttribute(giniCutoffs, 1));
+
+    const bldgMesh = new THREE.InstancedMesh(districtGeo, bldgMat, count);
+    bldgMesh.castShadow = true;
+    bldgMesh.receiveShadow = true;
+    bldgMesh.userData = { type: 'buildingInstanced', district };
+
+    // Roof InstancedMesh for this district
+    const roofMat = new THREE.MeshPhongMaterial({ color: 0x1a2a60 });
+    const roofMesh = new THREE.InstancedMesh(roofUnitGeo, roofMat, count);
+    roofMesh.castShadow = true;
+    roofMesh.userData = { type: 'roofInstanced', district };
+
+    const instances = [];  // instanceId -> building data
+
+    bldgList.forEach((bldg, idx) => {
+      const { key, p, color, emissiveColor } = bldg;
+
+      // Building body: position at (x, height/2, z), scale to (width, height, depth)
+      _bldgDummy.position.set(p.x, p.height / 2, p.z);
+      _bldgDummy.scale.set(p.width, p.height, p.depth);
+      _bldgDummy.rotation.set(0, 0, 0);
+      _bldgDummy.updateMatrix();
+      bldgMesh.setMatrixAt(idx, _bldgDummy.matrix);
+      bldgMesh.setColorAt(idx, color);
+      giniCutoffs[idx] = 0;
+
+      // Rooftop detail: position at (x, height + 0.75, z), scale to (width*0.3, 1.5, depth*0.3)
+      _bldgDummy.position.set(p.x, p.height + 0.75, p.z);
+      _bldgDummy.scale.set(p.width * 0.3, 1.5, p.depth * 0.3);
+      _bldgDummy.updateMatrix();
+      roofMesh.setMatrixAt(idx, _bldgDummy.matrix);
+
+      // Store instance data for raycasting lookup
+      instances.push({
+        key,
+        color: color.clone(),
+        emissiveColor: emissiveColor.clone(),
+        userData: {
+          type: 'building',
+          key,
+          ticker: p.ticker,
+          label: p.label || p.ticker,
+          district: p.district,
+          neighborhood: p.neighborhood,
+          totalInflow: p.totalInflow,
+          totalOutflow: p.totalOutflow,
+          netFlow: p.totalInflow - p.totalOutflow,
+          flowCount: p.flowCount,
+          litFraction: p.litFraction,
+          gini: p.gini,
+          accountCount: p.accountCount,
+          volume: p.volume,
+          aum: p.aum,
+          totalDaysInCash: p.totalDaysInCash || 0,
+        }
+      });
+
+      // Ticker label floating above building
+      const labelCanvas = document.createElement('canvas');
+      labelCanvas.width = 256; labelCanvas.height = 48;
+      const lctx = labelCanvas.getContext('2d');
+      lctx.clearRect(0, 0, 256, 48);
+      lctx.font = 'bold 28px JetBrains Mono, monospace';
+      lctx.textAlign = 'center';
+      lctx.lineWidth = 4;
+      lctx.strokeStyle = '#000000';
+      const spriteLabel = p.ticker.length > 15 ? p.ticker.slice(0, 15) + '…' : p.ticker;
+      lctx.strokeText(spriteLabel, 128, 34);
+      lctx.fillStyle = '#ffffff';
+      lctx.fillText(spriteLabel, 128, 34);
+      const labelTex = new THREE.CanvasTexture(labelCanvas);
+      const labelMat = new THREE.SpriteMaterial({ map: labelTex, transparent: true, opacity: 0.85 });
+      const label = new THREE.Sprite(labelMat);
+      label.position.set(p.x, p.height + 4, p.z);
+      label.scale.set(24, 4.4, 1);
+      label.visible = false;  // hidden by default, shown during isolation
+      scene.add(label);
+      labelSprites.push(label);
+      instances[idx].labelSprite = label;
+    });
+
+    bldgMesh.instanceMatrix.needsUpdate = true;
+    bldgMesh.instanceColor.needsUpdate = true;
+    districtGeo.attributes.aGiniCutoff.needsUpdate = true;
+    bldgMesh.computeBoundingSphere();
+    roofMesh.instanceMatrix.needsUpdate = true;
+    roofMesh.computeBoundingSphere();
+
+    scene.add(bldgMesh);
+    scene.add(roofMesh);
+
+    buildingMeshes.push(bldgMesh);
+    buildingMeshes.push(roofMesh);
+    interactables.push(bldgMesh);
+
+    buildingInstanceData[district] = { mesh: bldgMesh, roofMesh, instances };
+  });
+
+  // ── Neighborhood ground tint planes ──
+  // Subtle colored ground planes under each neighborhood cluster for visual identity
+  const neighborhoodClusters = {};  // "district|neighborhood" -> { sumX, sumZ, count, minX, maxX, minZ, maxZ }
+  Object.values(positions).forEach(p => {
+    const key = `${p.district}|${p.neighborhood}`;
+    if (!neighborhoodClusters[key]) {
+      neighborhoodClusters[key] = {
+        district: p.district, neighborhood: p.neighborhood,
+        sumX: 0, sumZ: 0, count: 0,
+        minX: Infinity, maxX: -Infinity, minZ: Infinity, maxZ: -Infinity,
+        maxHeight: 0
+      };
+    }
+    const c = neighborhoodClusters[key];
+    c.sumX += p.x;
+    c.sumZ += p.z;
+    c.count += 1;
+    c.maxHeight = Math.max(c.maxHeight, p.height || 0);
+    c.minX = Math.min(c.minX, p.x);
+    c.maxX = Math.max(c.maxX, p.x);
+    c.minZ = Math.min(c.minZ, p.z);
+    c.maxZ = Math.max(c.maxZ, p.z);
+  });
+
+  // Ground tint removed — rectangular planes overflowed Voronoi polygon boundaries
+
+  // ── Neighborhood ground-level labels ──
+  // Compute max building height per district so all labels clear all buildings
+  const districtMaxHeight = {};
+  Object.values(neighborhoodClusters).forEach(cluster => {
+    if (!districtMaxHeight[cluster.district] || cluster.maxHeight > districtMaxHeight[cluster.district]) {
+      districtMaxHeight[cluster.district] = cluster.maxHeight;
+    }
+  });
+  const districtMaxLabelY = {};
+  Object.values(neighborhoodClusters).forEach(cluster => {
+    if (cluster.count < 1) return;
+    const cx = cluster.sumX / cluster.count;
+    const cz = cluster.sumZ / cluster.count;
+
+    const nbCanvas = document.createElement('canvas');
+    nbCanvas.width = 512;
+    nbCanvas.height = 64;
+    const nbCtx = nbCanvas.getContext('2d');
+    nbCtx.clearRect(0, 0, 512, 64);
+    nbCtx.font = 'bold 28px Inter, system-ui, sans-serif';
+    nbCtx.textAlign = 'center';
+    nbCtx.globalAlpha = 0.7;
+    // Use neighborhood-specific color for label
+    const nbColor = neighborhoodColorMap[`${cluster.district}|${cluster.neighborhood}`]
+      || new THREE.Color(COLORS[cluster.district] || 0x888888);
+    const labelColor = nbColor.clone().lerp(new THREE.Color(0xffffff), 0.5);
+    const r = Math.round(labelColor.r * 255);
+    const g = Math.round(labelColor.g * 255);
+    const b = Math.round(labelColor.b * 255);
+    nbCtx.lineWidth = 5;
+    nbCtx.strokeStyle = '#000000';
+    nbCtx.strokeText(cluster.neighborhood, 256, 44);
+    nbCtx.fillStyle = '#FFFFFF';
+    nbCtx.fillText(cluster.neighborhood, 256, 44);
+
+    const nbTex = new THREE.CanvasTexture(nbCanvas);
+    const nbSpriteMat = new THREE.SpriteMaterial({ map: nbTex, transparent: true, opacity: 0.85 });
+    const nbSprite = new THREE.Sprite(nbSpriteMat);
+    const nbLabelY = (districtMaxHeight[cluster.district] || cluster.maxHeight) + 8;
+    const nbLabelScale = 40 + Math.min(cluster.count * 1.5, 30);
+    nbSprite.position.set(cx, nbLabelY, cz);
+    nbSprite.scale.set(nbLabelScale, nbLabelScale / 8, 1);
+    scene.add(nbSprite);
+    labelSprites.push(nbSprite);
+    nbLabelSprites.push(nbSprite);
+
+    if (!districtMaxLabelY[cluster.district] || nbLabelY > districtMaxLabelY[cluster.district]) {
+      districtMaxLabelY[cluster.district] = nbLabelY;
+    }
+  });
+
+  // Reposition district labels above all neighborhood labels in each district
+  Object.entries(districtLabelSprites).forEach(([name, sprite]) => {
+    const maxNbY = districtMaxLabelY[name] || 25;
+    sprite.position.y = maxNbY + 25;
+  });
+
+  populateNeighborhoodDropdown();
+}
+
+function populateNeighborhoodDropdown() {
+  const select = document.getElementById('filter-neighborhood');
+  if (!select) return;
+  // Clear existing options except "All"
+  while (select.options.length > 1) select.remove(1);
+
+  // Group neighborhoods by district
+  const districts = {};
+  Object.entries(globalNbRectMap).forEach(([key, rect]) => {
+    if (!districts[rect.district]) districts[rect.district] = [];
+    districts[rect.district].push(rect.name);
+  });
+
+  // Add optgroups per district
+  Object.entries(districts).sort((a, b) => a[0].localeCompare(b[0])).forEach(([district, nbs]) => {
+    const group = document.createElement('optgroup');
+    group.label = district;
+    nbs.sort().forEach(nb => {
+      const opt = document.createElement('option');
+      opt.value = `${district}|${nb}`;
+      opt.textContent = nb;
+      group.appendChild(opt);
+    });
+    select.appendChild(group);
+  });
+
+  // Populate district hover dropdowns
+  Object.entries(districts).forEach(([district, nbs]) => {
+    const dropdown = document.getElementById(`nb-dropdown-${district}`);
+    if (!dropdown) return;
+    dropdown.innerHTML = '';
+    nbs.sort().forEach(nb => {
+      const btn = document.createElement('button');
+      btn.className = 'nb-dropdown-item';
+      btn.textContent = nb;
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        applyNeighborhoodFilter(`${district}|${nb}`);
+        document.getElementById('filter-neighborhood').value = `${district}|${nb}`;
+      };
+      dropdown.appendChild(btn);
+    });
+  });
+}
+
+function applyNeighborhoodFilter(nbKey) {
+  // Reset isolation state
+  isolatedBuilding = null;
+  isolatedBuildingKey = null;
+  pinnedTooltip = false;
+
+  if (!nbKey) {
+    // "All Neighborhoods" selected — restore everything
+    restoreAllBuildings();
+    return;
+  }
+
+  // Find all building keys in this neighborhood
+  const nbBuildings = new Set();
+  Object.entries(buildingInstanceData).forEach(([district, distData]) => {
+    distData.instances.forEach(inst => {
+      const parts = inst.key.split('|');
+      const instNbKey = `${parts[0]}|${parts[1]}`;
+      if (instNbKey === nbKey) {
+        nbBuildings.add(inst.key);
+      }
+    });
+  });
+
+  // Find all flows involving these buildings
+  const connectedKeys = new Set(nbBuildings);
+  Object.values(currentFlows).forEach(flow => {
+    if (nbBuildings.has(flow.fromKey)) connectedKeys.add(flow.toKey);
+    if (nbBuildings.has(flow.toKey)) connectedKeys.add(flow.fromKey);
+  });
+
+  // Dim/highlight buildings
+  const dimColor = new THREE.Color(0x050505);
+  Object.entries(buildingInstanceData).forEach(([district, distData]) => {
+    distData.instances.forEach((inst, idx) => {
+      if (nbBuildings.has(inst.key)) {
+        // Buildings in selected neighborhood: highlight
+        const highlight = inst.color.clone().lerp(new THREE.Color(0xffffff), 0.25);
+        distData.mesh.setColorAt(idx, highlight);
+      } else if (connectedKeys.has(inst.key)) {
+        // Connected buildings: normal color
+        distData.mesh.setColorAt(idx, inst.color);
+      } else {
+        // Non-connected: dim
+        distData.mesh.setColorAt(idx, dimColor);
+      }
+    });
+    distData.mesh.instanceColor.needsUpdate = true;
+    if (distData.roofMesh && distData.roofMesh.material) {
+      distData.roofMesh.material.opacity = 0.5;
+      distData.roofMesh.material.transparent = true;
+    }
+  });
+
+  // Show ticker labels for neighborhood buildings, hide neighborhood labels
+  nbLabelSprites.forEach(s => s.visible = false);
+  Object.entries(buildingInstanceData).forEach(([district, distData]) => {
+    distData.instances.forEach((inst) => {
+      if (inst.labelSprite) {
+        inst.labelSprite.visible = nbBuildings.has(inst.key);
+      }
+    });
+  });
+
+  // Animate camera to actual building positions in the neighborhood
+  let sumX = 0, sumZ = 0, nbN = 0, maxH = 0;
+  let mnX = Infinity, mxX = -Infinity, mnZ = Infinity, mxZ = -Infinity;
+  nbBuildings.forEach(key => {
+    const p = currentPositions[key];
+    if (!p) return;
+    sumX += p.x; sumZ += p.z; nbN++;
+    maxH = Math.max(maxH, p.height || 0);
+    mnX = Math.min(mnX, p.x); mxX = Math.max(mxX, p.x);
+    mnZ = Math.min(mnZ, p.z); mxZ = Math.max(mxZ, p.z);
+  });
+  if (nbN > 0) {
+    const cx = sumX / nbN;
+    const cz = sumZ / nbN;
+    const span = Math.max(mxX - mnX, mxZ - mnZ, 30);
+    const viewHeight = span * 1.5 + 40;
+    animateCamera(
+      new THREE.Vector3(cx, viewHeight, cz + span / 2 + 30),
+      new THREE.Vector3(cx, 0, cz),
+      800
+    );
+  }
+}
+
+function formatCurrency(val) {
+  if (val >= 1e9) return '$' + (val / 1e9).toFixed(2) + 'B';
+  if (val >= 1e6) return '$' + (val / 1e6).toFixed(2) + 'M';
+  if (val >= 1e3) return '$' + (val / 1e3).toFixed(1) + 'K';
+  return '$' + val.toFixed(0);
+}
+
+function updateStats(agg, dateLabel) {
+  document.getElementById('stat-range').textContent = dateLabel;
+  document.getElementById('stat-total').textContent = agg.totalFlows.toLocaleString();
+  document.getElementById('stat-accounts').textContent = agg.totalUniqueAccounts.toLocaleString();
+  document.getElementById('stat-volume').textContent = formatCurrency(agg.totalVolume);
+  document.getElementById('stat-cross').textContent = agg.crossDistrictPct.toFixed(1) + '%';
+  document.getElementById('stat-days').textContent = agg.avgDaysInCash.toFixed(1);
+}
+
+// ── Data Period Display ──
+let dataDateRange = '';
+
+function rebuild() {
+  clearScene();
+  isolatedBuilding = null;
+  isolatedBuildingKey = null;
+  hoveredBuildingDistrict = null;
+  hoveredBuildingInstId = -1;
+  const agg = aggregateData(RAW_DATA);
+  currentFlows = agg.flows;
+
+  flowsByBuilding = {};
+  Object.values(currentFlows).forEach(flow => {
+    if (!flowsByBuilding[flow.fromKey]) flowsByBuilding[flow.fromKey] = [];
+    flowsByBuilding[flow.fromKey].push({ flow, otherKey: flow.toKey, isOutflow: true });
+    if (!flowsByBuilding[flow.toKey]) flowsByBuilding[flow.toKey] = [];
+    flowsByBuilding[flow.toKey].push({ flow, otherKey: flow.fromKey, isOutflow: false });
+  });
+
+  const dynamic = computeDynamicLayout(agg.buildings);
+  DISTRICT_LAYOUT = dynamic.layout;
+  PARKING_LOTS = dynamic.parkingLots;
+
+  const districtCash = {};
+  Object.values(agg.flows).forEach(flow => {
+    const avgDays = flow.totalDaysInCash / flow.count;
+    if (avgDays > 0) {
+      const d = flow.from_district;
+      districtCash[d] = (districtCash[d] || 0) + flow.totalAmount;
+    }
+  });
+  const maxCash = Math.max(...Object.values(districtCash), 1);
+  Object.entries(PARKING_LOTS).forEach(([district, lot]) => {
+    const cash = districtCash[district] || 0;
+    const scale = 0.5 + 0.5 * Math.sqrt(cash / maxCash);
+    const lay = DISTRICT_LAYOUT[district];
+    const margin = PIPELINE.parkingLotMargin;
+    const maxSize = lay ? Math.min(30, lay.w * 0.4, lay.h * 0.4) : 15;
+    lot.w = Math.round(maxSize * scale);
+    lot.h = Math.round(maxSize * scale);
+    // Clamp lot position so it stays fully inside district bounds after resizing
+    if (lay) {
+      const halfW = lot.w / 2;
+      const halfH = lot.h / 2;
+      const xMin = lay.cx - lay.w / 2 + margin + halfW;
+      const xMax = lay.cx + lay.w / 2 - margin - halfW;
+      const zMin = lay.cz - lay.h / 2 + margin + halfH;
+      const zMax = lay.cz + lay.h / 2 - margin - halfH;
+      lot.x = Math.max(xMin, Math.min(xMax, lot.x));
+      lot.z = Math.max(zMin, Math.min(zMax, lot.z));
+    }
+  });
+
+  const positions = layoutBuildings(agg.buildings);
+  currentPositions = positions;
+
+  createGroundAndRoads();
+  createBuildings(positions);
+  // createOrganicPaths(agg.flows);
+
+  // Initialize timelapse
+  timelineStart = null;
+  timelineEnd = null;
+  Object.values(agg.flows).forEach(flow => {
+    if (flow.firstDate) {
+      const d = new Date(flow.firstDate + 'T00:00:00');
+      if (!timelineStart || d < timelineStart) timelineStart = d;
+    }
+    if (flow.lastDate) {
+      const d = new Date(flow.lastDate + 'T00:00:00');
+      if (!timelineEnd || d > timelineEnd) timelineEnd = d;
+    }
+  });
+  totalTimelineDays = timelineStart && timelineEnd
+    ? (timelineEnd - timelineStart) / (1000 * 60 * 60 * 24)
+    : 1;
+  playbackDay = 0;
+  playbackPaused = false;
+  lastRenderedDay = -1;
+
+  // Pre-compute per-building daily AUM timeline for window lighting
+  buildingDailyAUM = {};
+  if (totalTimelineDays > 0) {
+    const numDays = Math.ceil(totalTimelineDays) + 1;
+
+    Object.entries(currentPositions).forEach(([key, pos]) => {
+      const endingAUM = pos.aum || 0;
+      if (endingAUM <= 0) return;
+      buildingDailyAUM[key] = {
+        endingAUM,
+        dailyNetFlow: new Float32Array(numDays),
+        dailyFraction: new Float32Array(numDays)
+      };
+    });
+
+    Object.values(agg.flows).forEach(flow => {
+      if (!flow.firstDate || !flow.lastDate) return;
+      const startDay = dateToDayOffset(flow.firstDate);
+      const endDay = dateToDayOffset(flow.lastDate);
+      const daysActive = Math.max(1, endDay - startDay);
+      const dailyAmount = flow.totalAmount / daysActive;
+
+      const fromEntry = buildingDailyAUM[flow.fromKey];
+      const toEntry = buildingDailyAUM[flow.toKey];
+      const dayStart = Math.max(0, Math.floor(startDay));
+      const dayEnd = Math.min(numDays - 1, Math.ceil(endDay));
+
+      for (let d = dayStart; d <= dayEnd; d++) {
+        if (fromEntry) fromEntry.dailyNetFlow[d] -= dailyAmount;
+        if (toEntry) toEntry.dailyNetFlow[d] += dailyAmount;
+      }
+    });
+
+    Object.values(buildingDailyAUM).forEach(entry => {
+      const { endingAUM, dailyNetFlow, dailyFraction } = entry;
+      let totalNet = 0;
+      for (let d = 0; d < dailyNetFlow.length; d++) totalNet += dailyNetFlow[d];
+      const startingAUM = Math.max(0, endingAUM - totalNet);
+      let cumulative = startingAUM;
+      for (let d = 0; d < dailyFraction.length; d++) {
+        cumulative += dailyNetFlow[d];
+        dailyFraction[d] = Math.max(0, Math.min(1, cumulative / endingAUM));
+      }
+    });
+  }
+
+  initDotPool();
+  prepareFlowPool(agg.flows);
+
+  updateStats(agg, dataDateRange);
+}
+
+// ── View Mode System ──
+async function checkDataAvailability() {
+  try {
+    const resp = await fetch('./data/v3_risk_matrix.json', { method: 'HEAD' });
+    riskDataAvailable = resp.ok && parseInt(resp.headers.get('content-length') || '0') > 100;
+  } catch { riskDataAvailable = false; }
+  // Also check risk mapping config
+  try {
+    const resp = await fetch('./config/risk_mapping.json', { method: 'HEAD' });
+    if (resp.ok) {
+      const data = await fetch('./config/risk_mapping.json');
+      riskMappingData = await data.json();
+    }
+  } catch { /* optional */ }
+  updateViewModeButtons();
+}
+
+function updateViewModeButtons() {
+  const btnRisk = document.getElementById('btn-risk');
+  if (riskDataAvailable && riskMappingData) {
+    btnRisk.className = 'pill pill--secondary';
+    btnRisk.title = 'Color buildings by risk tier';
+  } else {
+    btnRisk.className = 'pill pill--disabled';
+    btnRisk.title = 'Data not available yet';
+  }
+}
+
+async function setViewMode(mode) {
+  if (mode === currentViewMode) return;
+  if (mode === 'risk' && (!riskDataAvailable || !riskMappingData)) return;
+
+  currentViewMode = mode;
+
+  document.querySelectorAll('#view-mode-bar button').forEach(btn => {
+    const btnMode = btn.dataset.mode;
+    if (btnMode === mode) {
+      btn.className = 'pill pill--primary';
+    } else if (btnMode === 'risk' && !riskDataAvailable) {
+      btn.className = 'pill pill--disabled';
+    } else {
+      btn.className = 'pill pill--secondary';
+    }
+  });
+
+  if (mode === 'all') applyAllFlowsMode();
+  else if (mode === 'risk') applyRiskTierMode();
+}
+
+function applyAllFlowsMode() {
+  const legend = document.getElementById('legend');
+  if (originalLegendHTML) legend.innerHTML = originalLegendHTML;
+  // Restore original instance colors, then disable vertexColors
+  recolorBuildings((inst) => inst.color);
+  Object.entries(buildingInstanceData).forEach(([district, distData]) => {
+    if (distData.mesh.material.vertexColors) {
+      distData.mesh.material.vertexColors = false;
+      distData.mesh.material.needsUpdate = true;
+    }
+  });
+}
+
+function applyRiskTierMode() {
+  if (!riskMappingData) return;
+
+  recolorBuildings((inst) => {
+    const mapping = riskMappingData[inst.userData.neighborhood];
+    if (!mapping) return inst.color;
+    return new THREE.Color(RISK_TIER_COLORS[mapping.tier] || 0x888888);
+  });
+
+  const legend = document.getElementById('legend');
+  if (!originalLegendHTML) originalLegendHTML = legend.innerHTML;
+  let legendHTML = '<h3>Risk Tiers</h3>';
+  Object.entries(RISK_TIER_COLORS).forEach(([tier, hex]) => {
+    const c = new THREE.Color(hex);
+    legendHTML += `<div class="legend-item"><div class="legend-swatch" style="background:${c.getStyle()}"></div>${RISK_TIER_LABELS[tier]}</div>`;
+  });
+  legendHTML += '<div style="border-top:1px solid var(--color-border); margin:8px 0; padding-top:6px;">';
+  legendHTML += '<h3 style="margin-bottom:4px;">Visual Encoding</h3>';
+  legendHTML += '<div class="legend-item" style="font-size:10px; color:var(--color-label);">&#x25AE; Height = AUM (log scale)</div>';
+  legendHTML += '<div class="legend-item" style="font-size:10px; color:var(--color-label);">&#x2588; Color = Risk tier</div>';
+  legendHTML += '</div>';
+  legend.innerHTML = legendHTML;
+}
+
+function recolorBuildings(colorFn) {
+  Object.entries(buildingInstanceData).forEach(([district, distData]) => {
+    if (!distData.mesh.material.vertexColors) {
+      distData.mesh.material.vertexColors = true;
+      distData.mesh.material.needsUpdate = true;
+    }
+    distData.instances.forEach((inst, idx) => {
+      const color = colorFn(inst);
+      distData.mesh.setColorAt(idx, color);
+    });
+    distData.mesh.instanceColor.needsUpdate = true;
+  });
+}
+
+// ── Filter System ──
+function toggleFilterPanel() {
+  filterPanelOpen = !filterPanelOpen;
+  document.getElementById('filter-panel').style.display = filterPanelOpen ? 'flex' : 'none';
+}
+
+function toggleCrossDistrictFilter() {
+  crossDistrictFilterActive = !crossDistrictFilterActive;
+  const btn = document.getElementById('filter-cross');
+  btn.className = crossDistrictFilterActive
+    ? 'pill pill--primary pill--sm'
+    : 'pill pill--secondary pill--sm';
+  applyFilters();
+}
+
+function onMinFlowChange(val) {
+  document.getElementById('min-flow-label').textContent = val;
+  applyFilters();
+}
+
+function clearFilters() {
+  document.getElementById('filter-ticker').value = '';
+  document.getElementById('filter-min-flow').value = 0;
+  document.getElementById('min-flow-label').textContent = '0';
+  crossDistrictFilterActive = false;
+  document.getElementById('filter-cross').className = 'pill pill--secondary pill--sm';
+  document.getElementById('filter-neighborhood').value = '';
+  applyFilters();
+}
+
+function applyFilters() {
+  const tickerQuery = (document.getElementById('filter-ticker').value || '').toUpperCase().trim();
+  const minFlows = parseInt(document.getElementById('filter-min-flow').value) || 0;
+
+  const visibleBuildings = new Set();
+
+  Object.values(currentFlows).forEach(flow => {
+    let visible = true;
+    if (crossDistrictFilterActive && flow.from_district === flow.to_district) visible = false;
+    if (minFlows > 0 && flow.count < minFlows) visible = false;
+    if (tickerQuery && !flow.from_ticker.toUpperCase().includes(tickerQuery) && !flow.to_ticker.toUpperCase().includes(tickerQuery)) visible = false;
+    if (visible) {
+      visibleBuildings.add(flow.fromKey);
+      visibleBuildings.add(flow.toKey);
+    }
+  });
+
+  const noFilters = !tickerQuery && minFlows === 0 && !crossDistrictFilterActive;
+
+  Object.entries(buildingInstanceData).forEach(([district, distData]) => {
+    distData.instances.forEach((inst, idx) => {
+      const show = noFilters || visibleBuildings.has(inst.userData.key);
+      setBuildingVisible(district, idx, show);
+    });
+    distData.mesh.instanceMatrix.needsUpdate = true;
+    if (distData.roofMesh) distData.roofMesh.instanceMatrix.needsUpdate = true;
+  });
+}
+
+const _hiddenObj = new THREE.Object3D();
+_hiddenObj.position.set(0, -1000, 0);
+_hiddenObj.scale.set(0, 0, 0);
+_hiddenObj.updateMatrix();
+const _hiddenMatrix = _hiddenObj.matrix.clone();
+
+function setBuildingVisible(district, instanceId, visible) {
+  const distData = buildingInstanceData[district];
+  if (!distData) return;
+  const inst = distData.instances[instanceId];
+  if (!inst) return;
+
+  if (!visible) {
+    if (!inst.originalMatrix) {
+      inst.originalMatrix = new THREE.Matrix4();
+      distData.mesh.getMatrixAt(instanceId, inst.originalMatrix);
+      if (distData.roofMesh) {
+        inst.originalRoofMatrix = new THREE.Matrix4();
+        distData.roofMesh.getMatrixAt(instanceId, inst.originalRoofMatrix);
+      }
+    }
+    distData.mesh.setMatrixAt(instanceId, _hiddenMatrix);
+    if (distData.roofMesh) distData.roofMesh.setMatrixAt(instanceId, _hiddenMatrix);
+    if (inst.labelSprite) inst.labelSprite.visible = false;
+  } else if (inst.originalMatrix) {
+    distData.mesh.setMatrixAt(instanceId, inst.originalMatrix);
+    if (distData.roofMesh && inst.originalRoofMatrix) {
+      distData.roofMesh.setMatrixAt(instanceId, inst.originalRoofMatrix);
+    }
+    inst.originalMatrix = null;
+    inst.originalRoofMatrix = null;
+  }
+}
+
+// ── Camera Presets ──
+// Keys 1-5: outer districts, Key 6: overview
+const DISTRICT_PRESET_ORDER = ['Stocks', 'Bonds', 'ETFs', 'Options', 'Mutual Funds'];
+
+function cameraPreset(n) {
+  // Keys 1-5: districts — camera outside the ring looking inward
+  if (n >= 1 && n <= 5) {
+    const name = DISTRICT_PRESET_ORDER[n - 1];
+    const l = DISTRICT_LAYOUT[name];
+    if (!l) return;
+    // Direction from center (0,0) outward to district center
+    const dist = Math.sqrt(l.cx * l.cx + l.cz * l.cz) || 1;
+    const dirX = l.cx / dist;
+    const dirZ = l.cz / dist;
+    // Place camera outside the ring, offset outward from district center
+    const offset = Math.max(l.w, l.h) * 0.6 + 60;
+    const camX = l.cx + dirX * offset;
+    const camZ = l.cz + dirZ * offset;
+    animateCamera(
+      new THREE.Vector3(camX, 200, camZ),
+      new THREE.Vector3(l.cx, 0, l.cz),
+      800
+    );
+  }
+  // Key 6: overview — full city from above
+  else if (n === 6) {
+    animateCamera(new THREE.Vector3(0, 380, 440), new THREE.Vector3(0, 0, 0), 800);
+  }
+}
+
+// ── Expose functions for inline HTML handlers (ES module scope) ──
+window.setViewMode = setViewMode;
+window.toggleFilterPanel = toggleFilterPanel;
+window.toggleCrossDistrictFilter = toggleCrossDistrictFilter;
+window.onMinFlowChange = onMinFlowChange;
+window.clearFilters = clearFilters;
+window.applyFilters = applyFilters;
+window.cameraPreset = cameraPreset;
+window.toggleNightMode = toggleNightMode;
+window.applyNeighborhoodFilter = applyNeighborhoodFilter;
+window.togglePlayback = togglePlayback;
+window.setPlaybackSpeed = setPlaybackSpeed;
+
+function decompressData(compressed) {
+  const { lookups, fields, rows } = compressed;
+  const lookupMap = {
+    from_district: lookups.fd, to_district: lookups.td,
+    from_neighborhood: lookups.fn, to_neighborhood: lookups.tn,
+    from_building: lookups.fb, to_building: lookups.tb,
+    from_building_label: lookups.fl, to_building_label: lookups.tl,
+    first_flow_date: lookups.df, last_flow_date: lookups.dl,
+    avg_hours_in_cash: lookups.ah,
+  };
+  const result = new Array(rows.length);
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const obj = {};
+    for (let j = 0; j < fields.length; j++) {
+      const field = fields[j];
+      const val = row[j];
+      if (val === null) continue;
+      obj[field] = lookupMap[field] ? lookupMap[field][val] : val;
+    }
+    result[i] = obj;
+  }
+  return result;
+}
+
+// ── Load Data and Initialize ──
+async function init() {
+  try {
+    // Load flows and positions data in parallel
+    const [flowResponse, posResponse] = await Promise.all([
+      fetch('./data/selloff_viz.min.json'),
+      fetch('./data/positions_by_ticker.json')
+    ]);
+
+    const compressedData = await flowResponse.json();
+    RAW_DATA = decompressData(compressedData);
+
+    // Build AUM lookup from positions data
+    const positions = await posResponse.json();
+    aumLookup = {};
+    for (let i = 0; i < positions.length; i++) {
+      const p = positions[i];
+      const aum = parseFloat(p.total_settled_market_value_usd) || 0;
+      if (p.symbol) {
+        // Equities and Mutual Funds: keyed by symbol
+        aumLookup[p.symbol] = (aumLookup[p.symbol] || 0) + aum;
+      } else if (p.asset_id) {
+        // Fixed income (no symbol): keyed by asset_id
+        aumLookup[p.asset_id] = (aumLookup[p.asset_id] || 0) + aum;
+      }
+    }
+    const aumValues = Object.values(aumLookup);
+    maxAum = aumValues.length > 0 ? Math.max(...aumValues) : 1;
+
+    coerceNumericFields(RAW_DATA);
+
+    // Determine date range from first_flow_date / last_flow_date
+    let minDate = null, maxDate = null;
+    for (let i = 0; i < RAW_DATA.length; i++) {
+      const row = RAW_DATA[i];
+      if (row.first_flow_date && (!minDate || row.first_flow_date < minDate)) minDate = row.first_flow_date;
+      if (row.last_flow_date && (!maxDate || row.last_flow_date > maxDate)) maxDate = row.last_flow_date;
+    }
+    dataDateRange = (minDate && maxDate) ? `${minDate} to ${maxDate}` : 'N/A';
+    document.getElementById('date-range-display').textContent = dataDateRange;
+
+    rebuild();
+    originalLegendHTML = document.getElementById('legend').innerHTML;
+    checkDataAvailability();
+  } catch (err) {
+    document.getElementById('title-bar').innerHTML =
+      '<h1 style="color:#EF4444">Data Load Error</h1>' +
+      '<p>Could not load data files. Start a local server:<br>' +
+      '<code style="color:var(--color-heading-accent)">python3 -m http.server</code></p>' +
+      '<p style="color:#F59E0B;font-size:12px;margin-top:8px">' + err.message + '</p>';
+  }
+}
+init();
+
+
+// ── Animation Loop ──
+const clock = new THREE.Clock();
+const _dummy = new THREE.Object3D();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const delta = clock.getDelta();
+  controls.update();
+
+  // Timelapse: advance playback and manage dots
+  if (dotInstanceMesh && flowPool.length > 0) {
+    // Advance timeline
+    if (!playbackPaused) {
+      playbackDay += delta * playbackSpeed;
+      if (playbackDay > totalTimelineDays) {
+        playbackDay = 0; // loop
+      }
+      // Update scrubber UI if it exists
+      const scrubber = document.getElementById('timeline-scrubber');
+      if (scrubber && !scrubber._dragging) {
+        scrubber.value = (playbackDay / totalTimelineDays) * 100;
+      }
+      const dateLabel = document.getElementById('timeline-date');
+      if (dateLabel && timelineStart) {
+        const current = new Date(timelineStart.getTime() + playbackDay * 86400000);
+        dateLabel.textContent = current.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
+    }
+
+    // Update building window lighting when day changes
+    const currentDay = Math.min(Math.floor(playbackDay), Math.ceil(totalTimelineDays));
+    if (currentDay !== lastRenderedDay) {
+      lastRenderedDay = currentDay;
+      Object.entries(buildingInstanceData).forEach(([district, distData]) => {
+        if (!distData.mesh) return;
+        const giniAttr = distData.mesh.geometry.getAttribute('aGiniCutoff');
+        if (!giniAttr) return;
+        distData.instances.forEach((inst, idx) => {
+          const entry = buildingDailyAUM[inst.key];
+          let litFraction = entry ? (entry.dailyFraction[currentDay] ?? 1) : 1;
+          if (entry) {
+            const netFlow = entry.dailyNetFlow[currentDay] || 0;
+            const flowRatio = entry.endingAUM > 0 ? netFlow / entry.endingAUM : 0;
+            litFraction = Math.max(0, Math.min(1, litFraction + Math.max(-0.15, Math.min(0.15, flowRatio * 5))));
+          }
+          giniAttr.array[idx] = (1 - litFraction) * 0.85;
+        });
+        giniAttr.needsUpdate = true;
+      });
+    }
+
+    // Spawn new dots only when playing
+    if (!playbackPaused) {
+      const spawnBudget = 30;
+      let spawned = 0;
+      for (let i = 0; i < flowPool.length && spawned < spawnBudget; i++) {
+        const entry = flowPool[i];
+        if (playbackDay >= entry.startDay && playbackDay <= entry.endDay) {
+          const prob = Math.max(entry.dailyRate * delta * playbackSpeed, 0.002);
+          if (Math.random() < prob) {
+            spawnDot(entry);
+            spawned++;
+          }
+        }
+      }
+    }
+
+    // Update active dots (freeze when paused)
+    const _d = new THREE.Object3D();
+    const toRemove = [];
+    const nowMs = Date.now();
+    dotData.forEach((dot, idx) => {
+      if (!playbackPaused) dot.progress += (dot.speed * delta) / dot.totalLength;
+
+      let isDwelling = false;
+      if (dot.dwellRemaining > 0 && dot.parkingProgress >= 0 && dot.progress >= dot.parkingProgress) {
+        dot.progress = dot.parkingProgress;
+        if (!playbackPaused) dot.dwellRemaining -= delta * playbackSpeed;
+        isDwelling = true;
+      }
+
+      if (dot.progress >= 1.0) {
+        toRemove.push(idx);
+        return;
+      }
+
+      let pos;
+      if (isDwelling) {
+        pos = dot.waypoints[dot.parkingIndex].clone().add(dot.parkingOffset);
+      } else {
+        let targetDist = dot.progress * dot.totalLength;
+        let accum = 0;
+        pos = dot.waypoints[0].clone();
+        for (let i = 1; i < dot.waypoints.length; i++) {
+          const segLen = dot.waypoints[i].distanceTo(dot.waypoints[i - 1]);
+          if (accum + segLen >= targetDist) {
+            const t = (targetDist - accum) / segLen;
+            pos.lerpVectors(dot.waypoints[i - 1], dot.waypoints[i], t);
+            break;
+          }
+          accum += segLen;
+        }
+      }
+
+      _d.position.copy(pos);
+      dot.currentPos = pos.clone();
+      if (isDwelling) {
+        const pulseT = (nowMs % 1500) / 1500;
+        const s = 0.5 + 0.2 * Math.sin(pulseT * Math.PI * 2);
+        _d.scale.set(s, s, s);
+      } else {
+        _d.scale.set(0.6, 0.6, 0.6);
+      }
+      _d.updateMatrix();
+      dotInstanceMesh.setMatrixAt(dot.instanceIndex, _d.matrix);
+    });
+
+    // Despawn completed dots (iterate in reverse to preserve indices)
+    for (let i = toRemove.length - 1; i >= 0; i--) {
+      const idx = toRemove[i];
+      const dot = dotData[idx];
+      _d.position.set(0, -100, 0);
+      _d.scale.set(0, 0, 0);
+      _d.updateMatrix();
+      dotInstanceMesh.setMatrixAt(dot.instanceIndex, _d.matrix);
+      dotFreeList.push(dot.instanceIndex);
+      dotData.splice(idx, 1);
+    }
+
+    if (dotData.length > 0 || toRemove.length > 0) {
+      dotInstanceMesh.instanceMatrix.needsUpdate = true;
+      if (dotInstanceMesh.instanceColor) dotInstanceMesh.instanceColor.needsUpdate = true;
+    }
+  }
+
+  // Raycasting for hover — only when mouse moved
+  if (mouseMoved) {
+    mouseMoved = false;
+    performRaycast();
+  }
+
+  renderer.render(scene, camera);
+}
+
+// Clear any active building hover highlight and reset tracking state.
+// In isolation mode, skip restoring the individual instance color because
+// isolation has already overwritten all instance colors; restoreAllBuildings
+// handles full cleanup when isolation ends.
+function clearBuildingHover() {
+  if (hoveredBuildingDistrict !== null && hoveredBuildingInstId >= 0) {
+    if (!isolatedBuildingKey) {
+      restoreBuildingInstance(hoveredBuildingDistrict, hoveredBuildingInstId);
+    }
+  }
+  hoveredBuildingDistrict = null;
+  hoveredBuildingInstId = -1;
+  hoveredInstanceId = -1;
+  hoveredObj = null;
+}
+
+function performRaycast() {
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(interactables, false);
+
+  if (intersects.length > 0) {
+    const hit = intersects[0];
+
+    // Check if hit is a building InstancedMesh
+    const bldgHit = getBuildingFromHit(hit);
+    if (bldgHit && !bldgHit.data.originalMatrix) {
+      const d = bldgHit.data.userData;
+      if (!pinnedTooltip) {
+        tooltipEl.innerHTML = `
+          <h4>${d.label}</h4>
+          <div class="tip-row"><span class="tip-label">Ticker</span><span class="tip-value">${d.ticker}</span></div>
+          <div class="tip-row"><span class="tip-label">District</span><span class="tip-value">${d.district}</span></div>
+          <div class="tip-row"><span class="tip-label">Neighborhood</span><span class="tip-value">${d.neighborhood}</span></div>
+          <div class="tip-row"><span class="tip-label">${totalTimelineDays > 0 ? 'AUM (current)' : 'AUM'}</span><span class="tip-value">${(() => { const entry = buildingDailyAUM[d.key]; if (totalTimelineDays > 0 && entry) { const day = Math.min(Math.floor(playbackDay), Math.ceil(totalTimelineDays)); return formatCurrency(entry.endingAUM * (entry.dailyFraction[day] ?? 1)); } return d.aum ? formatCurrency(d.aum) : 'N/A'; })()}</span></div>
+          <div class="tip-row"><span class="tip-label">Total Inflow</span><span class="tip-value">${formatCurrency(d.totalInflow)}</span></div>
+          <div class="tip-row"><span class="tip-label">Total Outflow</span><span class="tip-value">${formatCurrency(d.totalOutflow)}</span></div>
+          <div class="tip-row"><span class="tip-label">Net Flow</span><span class="tip-value" style="color:${d.netFlow >= 0 ? '#22C55E' : '#EF4444'}">${formatCurrency(Math.abs(d.netFlow))} ${d.netFlow >= 0 ? 'in' : 'out'}</span></div>
+          <div class="tip-row"><span class="tip-label">Flow Count</span><span class="tip-value">${d.flowCount.toLocaleString()}</span></div>
+          <div class="tip-row"><span class="tip-label">Unique Accounts</span><span class="tip-value">${(d.accountCount || 0).toLocaleString()}</span></div>
+          <div class="tip-row"><span class="tip-label">Concentration</span><span class="tip-value">${d.gini !== undefined ? d.gini.toFixed(2) + (d.gini > 0.6 ? ' (Concentrated)' : d.gini < 0.3 ? ' (Distributed)' : ' (Moderate)') : 'N/A'}</span></div>
+          <div class="tip-row"><span class="tip-label">Avg Hours in Cash</span><span class="tip-value">${d.flowCount > 0 ? (d.totalDaysInCash / d.flowCount).toFixed(1) : 'N/A'}</span></div>
+        `;
+        tooltipEl.style.display = 'block';
+      }
+
+      // Unhighlight previous hover if different building
+      if (hoveredBuildingDistrict !== bldgHit.district || hoveredBuildingInstId !== bldgHit.instanceId) {
+        clearBuildingHover();
+        if (!isolatedBuildingKey) {
+          highlightBuildingInstance(bldgHit.district, bldgHit.instanceId);
+          hoveredBuildingDistrict = bldgHit.district;
+          hoveredBuildingInstId = bldgHit.instanceId;
+          showArcsForBuilding(d.key);
+        }
+      }
+    } else {
+      // Hit a non-building interactable (walking dot, tent, etc.)
+      // Must still clear any previous building hover highlight
+      clearBuildingHover();
+      if (!pinnedTooltip) tooltipEl.style.display = 'none';
+      if (!isolatedBuildingKey) clearArcs();
+    }
+  } else {
+    // No hit at all — clear everything
+    clearBuildingHover();
+    if (!pinnedTooltip) tooltipEl.style.display = 'none';
+    if (!isolatedBuildingKey) clearArcs();
+  }
+}
+
+// ── Isolation (click-to-isolate) ──
+function restoreAllBuildings() {
+  // Restore all building instances to original colors and correct emissive state
+  Object.entries(buildingInstanceData).forEach(([district, distData]) => {
+    distData.instances.forEach((inst, idx) => {
+      distData.mesh.setColorAt(idx, inst.color);
+    });
+    distData.mesh.instanceColor.needsUpdate = true;
+    const mat = distData.mesh.material;
+    if (nightMode) {
+      mat.emissive.set(1.0, 0.92, 0.7);
+      mat.emissiveIntensity = 1.8;
+      mat.color.set(0.55, 0.55, 0.55);
+    } else {
+      mat.emissive.set(1.0, 0.95, 0.85);
+      mat.emissiveIntensity = 0.35;
+      mat.color.set(0.75, 0.75, 0.75);
+    }
+    mat.opacity = 1.0;
+    mat.transparent = false;
+    mat.needsUpdate = true;
+    // Restore roof opacity
+    if (distData.roofMesh && distData.roofMesh.material) {
+      distData.roofMesh.material.opacity = 1.0;
+      distData.roofMesh.material.transparent = false;
+    }
+  });
+
+  // Restore label visibility: hide ticker labels, show neighborhood labels
+  Object.entries(buildingInstanceData).forEach(([district, distData]) => {
+    distData.instances.forEach((inst) => {
+      if (inst.labelSprite) inst.labelSprite.visible = false;
+    });
+  });
+  nbLabelSprites.forEach(s => s.visible = true);
+
+  const nbSelect = document.getElementById('filter-neighborhood');
+  if (nbSelect) nbSelect.value = '';
+}
+
+let _mouseDownPos = null;
+window.addEventListener('mousedown', (e) => {
+  _mouseDownPos = { x: e.clientX, y: e.clientY };
+});
+
+window.addEventListener('click', (e) => {
+  // Ignore clicks that were actually orbit drags
+  if (_mouseDownPos) {
+    const dx = e.clientX - _mouseDownPos.x;
+    const dy = e.clientY - _mouseDownPos.y;
+    if (dx * dx + dy * dy > 25) return; // dragged >5px
+  }
+
+  const clickMouse = new THREE.Vector2(
+    (e.clientX / window.innerWidth) * 2 - 1,
+    -(e.clientY / window.innerHeight) * 2 + 1
+  );
+  raycaster.setFromCamera(clickMouse, camera);
+
+  const flowTip = document.getElementById('flow-tooltip');
+
+  // ── Priority 1: Buildings (solid geometry, highest click priority) ──
+  const intersects = raycaster.intersectObjects(interactables, false);
+  if (intersects.length > 0) {
+    const bldgHit = getBuildingFromHit(intersects[0]);
+    if (bldgHit && !bldgHit.data.originalMatrix) {
+      const clickedKey = bldgHit.data.userData.key;
+
+      if (flowTip) flowTip.style.display = 'none';
+
+      // Toggle isolation: clicking same building restores all
+      if (isolatedBuildingKey === clickedKey) {
+        isolatedBuilding = null;
+        isolatedBuildingKey = null;
+        pinnedTooltip = false;
+        clearArcs();
+        restoreAllBuildings();
+        hoveredBuildingDistrict = null;
+        hoveredBuildingInstId = -1;
+        return;
+      }
+
+      // Clear previous isolation state before entering new one
+      clearBuildingHover();
+      clearArcs();
+      restoreAllBuildings();
+
+      isolatedBuilding = { district: bldgHit.district, instanceId: bldgHit.instanceId };
+      isolatedBuildingKey = clickedKey;
+      showArcsForBuilding(clickedKey);
+
+      const connectedKeys = new Set();
+      connectedKeys.add(clickedKey);
+      const entries = flowsByBuilding[clickedKey] || [];
+      const sorted = [...entries].sort((a, b) => b.flow.totalAmount - a.flow.totalAmount);
+      sorted.slice(0, 25).forEach(({ otherKey }) => connectedKeys.add(otherKey));
+
+      const dimColor = new THREE.Color(0x050505);
+      Object.entries(buildingInstanceData).forEach(([district, distData]) => {
+        let anyConnected = false;
+        distData.instances.forEach((inst, idx) => {
+          if (connectedKeys.has(inst.key)) {
+            if (inst.key === clickedKey) {
+              distData.mesh.setColorAt(idx, inst.color.clone().lerp(new THREE.Color(0xffffff), 0.35));
+            } else {
+              distData.mesh.setColorAt(idx, inst.color);
+            }
+            anyConnected = true;
+          } else {
+            distData.mesh.setColorAt(idx, dimColor);
+          }
+        });
+        distData.mesh.instanceColor.needsUpdate = true;
+        if (distData.roofMesh && distData.roofMesh.material) {
+          distData.roofMesh.material.opacity = anyConnected ? 0.5 : 0.05;
+          distData.roofMesh.material.transparent = true;
+        }
+      });
+
+      nbLabelSprites.forEach(s => s.visible = false);
+      Object.entries(buildingInstanceData).forEach(([district, distData]) => {
+        distData.instances.forEach((inst) => {
+          if (inst.labelSprite) inst.labelSprite.visible = connectedKeys.has(inst.key);
+        });
+      });
+      return;
+    }
+  }
+
+  // ── Priority 2: Flow dots (ground-level moving objects) ──
+  if (dotData.length > 0) {
+    const _groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -0.5);
+    const _clickPt = new THREE.Vector3();
+    if (raycaster.ray.intersectPlane(_groundPlane, _clickPt)) {
+      let closestDot = null, closestDist = 8;
+      for (const dot of dotData) {
+        if (!dot.currentPos) continue;
+        const dx = dot.currentPos.x - _clickPt.x;
+        const dz = dot.currentPos.z - _clickPt.z;
+        const dist = Math.sqrt(dx * dx + dz * dz);
+        if (dist < closestDist) { closestDist = dist; closestDot = dot; }
+      }
+      if (closestDot && closestDot.flow) {
+        const f = closestDot.flow;
+
+        const avgHoursInCash = f.count > 0 ? (f.totalDaysInCash / f.count) : 0;
+        let volStr;
+        if (f.totalAmount >= 1e9) volStr = '$' + (f.totalAmount / 1e9).toFixed(2) + 'B';
+        else if (f.totalAmount >= 1e6) volStr = '$' + (f.totalAmount / 1e6).toFixed(2) + 'M';
+        else if (f.totalAmount >= 1e3) volStr = '$' + (f.totalAmount / 1e3).toFixed(1) + 'K';
+        else volStr = '$' + f.totalAmount.toFixed(0);
+        let cashStr;
+        if (avgHoursInCash >= 24) cashStr = (avgHoursInCash / 24).toFixed(1) + ' days';
+        else cashStr = avgHoursInCash.toFixed(1) + ' hrs';
+        if (flowTip) {
+          flowTip.innerHTML =
+            `<div class="flow-label">Capital Flow</div>` +
+            `<div class="flow-direction">` +
+              `<span>${f.from_ticker}</span>` +
+              `<span class="flow-arrow">→</span>` +
+              `<span>${f.to_ticker}</span>` +
+            `</div>` +
+            `<hr class="flow-divider">` +
+            `<div class="flow-row"><span class="flow-row-label">Volume</span><span class="flow-row-value">${volStr}</span></div>` +
+            `<div class="flow-row"><span class="flow-row-label">Flow Count</span><span class="flow-row-value">${f.count.toLocaleString()}</span></div>` +
+            `<div class="flow-row"><span class="flow-row-label">Avg Time in Cash</span><span class="flow-row-value">${cashStr}</span></div>` +
+            `<div class="flow-row"><span class="flow-row-label">Unique Accounts</span><span class="flow-row-value">${f.uniqueAccounts.toLocaleString()}</span></div>` +
+            `<hr class="flow-divider">` +
+            `<div class="flow-row"><span class="flow-row-label">From</span><span class="flow-row-value">${f.from_neighborhood} (${f.from_district})</span></div>` +
+            `<div class="flow-row"><span class="flow-row-label">To</span><span class="flow-row-value">${f.to_neighborhood} (${f.to_district})</span></div>`;
+          const tipW = 300, tipH = 280;
+          let tipX = e.clientX + 15;
+          let tipY = e.clientY + 15;
+          if (tipX + tipW > window.innerWidth) tipX = e.clientX - tipW - 10;
+          if (tipY + tipH > window.innerHeight) tipY = e.clientY - tipH - 10;
+          if (typeof clampTipPosition === 'function') {
+            const clamped = clampTipPosition(tipX, tipY, tipW, tipH);
+            tipX = clamped.x; tipY = clamped.y;
+          }
+          flowTip.style.left = tipX + 'px';
+          flowTip.style.top = tipY + 'px';
+          flowTip.style.display = 'block';
+        }
+
+        clearBuildingHover();
+        clearArcs();
+        if (isolatedBuilding || isolatedBuildingKey) {
+          restoreAllBuildings();
+        }
+
+        const flowKeys = new Set([f.fromKey, f.toKey]);
+        isolatedBuildingKey = f.fromKey;
+
+        const fromPos = currentPositions[f.fromKey];
+        const toPos = currentPositions[f.toKey];
+        if (fromPos && toPos) {
+          const startY = fromPos.height + 2;
+          const endY = toPos.height + 2;
+          const dx = toPos.x - fromPos.x;
+          const dz = toPos.z - fromPos.z;
+          const distance = Math.sqrt(dx * dx + dz * dz);
+          const midX = (fromPos.x + toPos.x) / 2;
+          const midZ = (fromPos.z + toPos.z) / 2;
+          const midY = Math.max(startY, endY) + 15 + distance * 0.15;
+          const curve = new THREE.QuadraticBezierCurve3(
+            new THREE.Vector3(fromPos.x, startY, fromPos.z),
+            new THREE.Vector3(midX, midY, midZ),
+            new THREE.Vector3(toPos.x, endY, toPos.z)
+          );
+          const arcColor = COLORS[f.from_district] || 0x5EEAD4;
+          const curvePoints = curve.getPoints(32);
+          const positions = [];
+          curvePoints.forEach(p => positions.push(p.x, p.y, p.z));
+          const lineGeo = new LineGeometry();
+          lineGeo.setPositions(positions);
+          const lineMat = new LineMaterial({
+            color: arcColor, transparent: true, opacity: 0.7,
+            linewidth: 6, resolution: new THREE.Vector2(window.innerWidth, window.innerHeight)
+          });
+          const line = new Line2(lineGeo, lineMat);
+          line.computeLineDistances();
+          line.userData = { type: 'flowEndpoint', flow: f, isOutflow: true, otherKey: f.toKey };
+          scene.add(line);
+          arcMeshes.push(line);
+          arcInteractables.push(line);
+        }
+
+        const dimColor = new THREE.Color(0x050505);
+        Object.entries(buildingInstanceData).forEach(([district, distData]) => {
+          let anyConnected = false;
+          distData.instances.forEach((inst, idx) => {
+            if (flowKeys.has(inst.key)) {
+              distData.mesh.setColorAt(idx, inst.color.clone().lerp(new THREE.Color(0xffffff), 0.35));
+              anyConnected = true;
+            } else {
+              distData.mesh.setColorAt(idx, dimColor);
+            }
+          });
+          distData.mesh.instanceColor.needsUpdate = true;
+          if (distData.roofMesh && distData.roofMesh.material) {
+            distData.roofMesh.material.opacity = anyConnected ? 0.5 : 0.05;
+            distData.roofMesh.material.transparent = true;
+          }
+        });
+        nbLabelSprites.forEach(s => s.visible = false);
+        Object.entries(buildingInstanceData).forEach(([district, distData]) => {
+          distData.instances.forEach((inst) => {
+            if (inst.labelSprite) inst.labelSprite.visible = flowKeys.has(inst.key);
+          });
+        });
+        return;
+      }
+    }
+  }
+
+  // ── Priority 3: Arc lines (only when a building is already selected) ──
+  if (isolatedBuildingKey) {
+    const arcHits = raycaster.intersectObjects(arcInteractables, false);
+    if (arcHits.length > 0) {
+      const ud = arcHits[0].object.userData;
+      if (ud.type === 'flowEndpoint') {
+        const f = ud.flow;
+        const dirLabel = ud.isOutflow ? 'Outflow' : 'Inflow';
+        const arrow = ud.isOutflow ? '→' : '←';
+        const avgHoursInCash = f.count > 0 ? (f.totalDaysInCash / f.count) : 0;
+        let volStr;
+        if (f.totalAmount >= 1e9) volStr = '$' + (f.totalAmount / 1e9).toFixed(2) + 'B';
+        else if (f.totalAmount >= 1e6) volStr = '$' + (f.totalAmount / 1e6).toFixed(2) + 'M';
+        else if (f.totalAmount >= 1e3) volStr = '$' + (f.totalAmount / 1e3).toFixed(1) + 'K';
+        else volStr = '$' + f.totalAmount.toFixed(0);
+        let cashStr;
+        if (avgHoursInCash >= 24) cashStr = (avgHoursInCash / 24).toFixed(1) + ' days';
+        else cashStr = avgHoursInCash.toFixed(1) + ' hrs';
+        if (flowTip) {
+          flowTip.innerHTML =
+            `<div class="flow-label">${dirLabel}</div>` +
+            `<div class="flow-direction">` +
+              `<span>${f.from_ticker}</span>` +
+              `<span class="flow-arrow">${arrow}</span>` +
+              `<span>${f.to_ticker}</span>` +
+            `</div>` +
+            `<hr class="flow-divider">` +
+            `<div class="flow-row"><span class="flow-row-label">Volume</span><span class="flow-row-value">${volStr}</span></div>` +
+            `<div class="flow-row"><span class="flow-row-label">Flow Count</span><span class="flow-row-value">${f.count.toLocaleString()}</span></div>` +
+            `<div class="flow-row"><span class="flow-row-label">Avg Time in Cash</span><span class="flow-row-value">${cashStr}</span></div>` +
+            `<div class="flow-row"><span class="flow-row-label">Unique Accounts</span><span class="flow-row-value">${f.uniqueAccounts.toLocaleString()}</span></div>` +
+            `<hr class="flow-divider">` +
+            `<div class="flow-row"><span class="flow-row-label">From</span><span class="flow-row-value">${f.from_neighborhood} (${f.from_district})</span></div>` +
+            `<div class="flow-row"><span class="flow-row-label">To</span><span class="flow-row-value">${f.to_neighborhood} (${f.to_district})</span></div>`;
+          const tipW = 300, tipH = 280;
+          let tipX = e.clientX + 15;
+          let tipY = e.clientY + 15;
+          if (tipX + tipW > window.innerWidth) tipX = e.clientX - tipW - 10;
+          if (tipY + tipH > window.innerHeight) tipY = e.clientY - tipH - 10;
+          if (typeof clampTipPosition === 'function') {
+            const clamped = clampTipPosition(tipX, tipY, tipW, tipH);
+            tipX = clamped.x; tipY = clamped.y;
+          }
+          flowTip.style.left = tipX + 'px';
+          flowTip.style.top = tipY + 'px';
+          flowTip.style.display = 'block';
+        }
+        return;
+      }
+    }
+  }
+
+  // ── Priority 4: Clicked empty space — restore all ──
+  if (flowTip) flowTip.style.display = 'none';
+  if (isolatedBuilding || isolatedBuildingKey) {
+    isolatedBuilding = null;
+    isolatedBuildingKey = null;
+    pinnedTooltip = false;
+    tooltipEl.style.display = 'none';
+    clearArcs();
+    restoreAllBuildings();
+    hoveredBuildingDistrict = null;
+    hoveredBuildingInstId = -1;
+  }
+});
+
+// ── Event Handlers ──
+window.addEventListener('mousemove', (e) => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  tooltipEl.style.left = (e.clientX + 16) + 'px';
+  tooltipEl.style.top = (e.clientY + 16) + 'px';
+  if (typeof clampTooltip === 'function') clampTooltip(tooltipEl);
+  mouseMoved = true;
+});
+
+// ── Camera Presets (1-6 keys) ──
+function animateCamera(targetPos, targetLookAt, duration) {
+  const startPos = camera.position.clone();
+  const startTarget = controls.target.clone();
+  const startTime = performance.now();
+  function step() {
+    const elapsed = performance.now() - startTime;
+    const t = Math.min(elapsed / duration, 1);
+    const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    camera.position.lerpVectors(startPos, targetPos, ease);
+    controls.target.lerpVectors(startTarget, targetLookAt, ease);
+    controls.update();
+    if (t < 1) requestAnimationFrame(step);
+  }
+  step();
+}
+
+function toggleNightMode() {
+  nightMode = !nightMode;
+  Object.entries(buildingInstanceData).forEach(([district, distData]) => {
+    const mat = distData.mesh.material;
+    if (nightMode) {
+      mat.emissive.set(1.0, 0.92, 0.7);
+      mat.emissiveIntensity = 1.8;
+      mat.color.set(0.55, 0.55, 0.55);
+    } else {
+      mat.emissive.set(1.0, 0.95, 0.85);
+      mat.emissiveIntensity = 0.35;
+      mat.color.set(0.75, 0.75, 0.75);
+    }
+    mat.needsUpdate = true;
+  });
+  const btn = document.getElementById('night-mode-btn');
+  if (btn) btn.textContent = nightMode ? 'Day' : 'Night';
+}
+
+function togglePlayback() {
+  playbackPaused = !playbackPaused;
+  const btn = document.getElementById('play-pause-btn');
+  if (btn) btn.innerHTML = playbackPaused ? '&#x25B6;' : '&#x23F8;';
+}
+
+function setPlaybackSpeed(val) {
+  playbackSpeed = PLAYBACK_BASE_RATE * (parseFloat(val) || 1);
+}
+
+// Scrubber interaction
+(function initScrubber() {
+  const scrubber = document.getElementById('timeline-scrubber');
+  if (!scrubber) return;
+  scrubber.addEventListener('mousedown', () => { scrubber._dragging = true; });
+  scrubber.addEventListener('touchstart', () => { scrubber._dragging = true; });
+  scrubber.addEventListener('input', () => {
+    if (totalTimelineDays > 0) {
+      playbackDay = (parseFloat(scrubber.value) / 100) * totalTimelineDays;
+      // Clear existing dots so new ones spawn at the correct day
+      const _d = new THREE.Object3D();
+      _d.position.set(0, -100, 0);
+      _d.scale.set(0, 0, 0);
+      _d.updateMatrix();
+      dotData.forEach(dot => {
+        dotInstanceMesh.setMatrixAt(dot.instanceIndex, _d.matrix);
+        dotFreeList.push(dot.instanceIndex);
+      });
+      dotData = [];
+      if (dotInstanceMesh) dotInstanceMesh.instanceMatrix.needsUpdate = true;
+    }
+  });
+  window.addEventListener('mouseup', () => { scrubber._dragging = false; });
+  window.addEventListener('touchend', () => { scrubber._dragging = false; });
+})();
+
+window.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+  const key = e.key;
+  if (key >= '1' && key <= '7') cameraPreset(parseInt(key));
+  else if (key === 'n' || key === 'N') toggleNightMode();
+  else if (key === 'f' || key === 'F') toggleFilterPanel();
+  else if (key === ' ') { e.preventDefault(); togglePlayback(); }
+  else if (key === 'ArrowRight') { playbackDay = Math.min(playbackDay + 1, totalTimelineDays); }
+  else if (key === 'ArrowLeft') { playbackDay = Math.max(playbackDay - 1, 0); }
+});
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  // Update resolution for any active LineMaterial arcs
+  arcMeshes.forEach(m => {
+    if (m.material && m.material.resolution) {
+      m.material.resolution.set(window.innerWidth, window.innerHeight);
+    }
+  });
+});
+
+animate();
+
+// ── Theme Toggle ──
+function initTheme() {
+  const saved = localStorage.getItem('cfv-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  updateThemeIcon(saved);
+  applySceneTheme(saved);
+}
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('cfv-theme', next);
+  updateThemeIcon(next);
+  applySceneTheme(next);
+}
+function updateThemeIcon(theme) {
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.innerHTML = theme === 'dark' ? '&#x1F319;' : '&#x2600;&#xFE0F;';
+}
+window.toggleTheme = toggleTheme;
+initTheme();
+</script>
+<script src="mobile.js"></script>
+</body>
+</html>

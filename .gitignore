@@ -1,0 +1,13 @@
+.claude/
+thoughts/
+.venv/
+__pycache__/
+
+# Raw and intermediate data files (too large for git)
+data/capital_flows_raw.json
+data/capital_flows_raw.json.tmp
+data/capital_flows_viz.json
+data/selloff_raw.json
+data/selloff_raw.json.tmp
+data/selloff_viz.json
+data/*.tmp
